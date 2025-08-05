@@ -121,15 +121,15 @@ const TalentCalculator = () => {
     <div className="min-h-screen bg-background py-8 px-4">
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Header */}
-        <div className="text-center space-y-4">
+        <div className="text-center space-y-4 animate-fade-in">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <Crown className="w-8 h-8 text-gold" />
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-gold to-gold-dark bg-clip-text text-transparent">
+            <Crown className="w-8 h-8 text-gold animate-glow" />
+            <h1 className="text-4xl font-bold font-royal bg-gradient-to-r from-gold to-gold-dark bg-clip-text text-transparent">
               Rustic Got Talent Calculator
             </h1>
-            <Crown className="w-8 h-8 text-gold" />
+            <Crown className="w-8 h-8 text-gold animate-glow" />
           </div>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-muted-foreground text-lg font-elegant">
             Calculate contestant scores based on judges' ratings and audience votes
           </p>
         </div>
@@ -137,11 +137,11 @@ const TalentCalculator = () => {
         {/* Main Calculator */}
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Input Section */}
-          <div className="space-y-6">
+          <div className="space-y-6 animate-fade-in" style={{ animationDelay: '0.2s' }}>
             {/* Judges Configuration */}
-            <Card className="border-gold/20 shadow-lg">
+            <Card className="border-gold/20 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-gold/30">
               <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2 text-gold">
+                <CardTitle className="flex items-center gap-2 text-gold font-royal">
                   <Trophy className="w-5 h-5" />
                   Judges Configuration
                 </CardTitle>
@@ -255,9 +255,9 @@ const TalentCalculator = () => {
             </Card>
 
             {/* Audience Voting */}
-            <Card className="border-gold/20 shadow-lg">
+            <Card className="border-gold/20 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-gold/30">
               <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2 text-gold">
+                <CardTitle className="flex items-center gap-2 text-gold font-royal">
                   <Users className="w-5 h-5" />
                   Audience Voting
                 </CardTitle>
@@ -307,7 +307,7 @@ const TalentCalculator = () => {
           </div>
 
           {/* Results Section */}
-          <div className="space-y-6">
+          <div className="space-y-6 animate-fade-in" style={{ animationDelay: '0.4s' }}>
             {results && (
               <>
                 {/* Final Score */}
