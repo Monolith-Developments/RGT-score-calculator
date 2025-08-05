@@ -8,9 +8,9 @@ import { Plus, Minus, Crown, Trophy, Users, Calculator } from 'lucide-react';
 
 interface Judge {
   id: number;
-  creativity: number;
-  quality: number;
-  specialCriteria: number[];
+  creativity: string;
+  quality: string;
+  specialCriteria: string[];
 }
 
 interface CalculationResults {
@@ -25,12 +25,12 @@ interface CalculationResults {
 const TalentCalculator = () => {
   const [numJudges, setNumJudges] = useState<number>(3);
   const [judges, setJudges] = useState<Judge[]>([
-    { id: 1, creativity: 0, quality: 0, specialCriteria: [0] },
-    { id: 2, creativity: 0, quality: 0, specialCriteria: [0] },
-    { id: 3, creativity: 0, quality: 0, specialCriteria: [0] }
+    { id: 1, creativity: '', quality: '', specialCriteria: [''] },
+    { id: 2, creativity: '', quality: '', specialCriteria: [''] },
+    { id: 3, creativity: '', quality: '', specialCriteria: [''] }
   ]);
-  const [audienceVoters, setAudienceVoters] = useState<number>(0);
-  const [totalAudiencePoints, setTotalAudiencePoints] = useState<number>(0);
+  const [audienceVoters, setAudienceVoters] = useState<string>('');
+  const [totalAudiencePoints, setTotalAudiencePoints] = useState<string>('');
   const [results, setResults] = useState<CalculationResults | null>(null);
 
   const updateNumJudges = useCallback((newNum: number) => {
@@ -39,18 +39,18 @@ const TalentCalculator = () => {
     
     const newJudges = Array.from({ length: newNum }, (_, i) => {
       const existingJudge = judges[i];
-      return existingJudge || { id: i + 1, creativity: 0, quality: 0, specialCriteria: [0] };
+      return existingJudge || { id: i + 1, creativity: '', quality: '', specialCriteria: [''] };
     });
     setJudges(newJudges);
   }, [judges]);
 
-  const updateJudge = useCallback((judgeId: number, field: keyof Judge, value: number) => {
+  const updateJudge = useCallback((judgeId: number, field: keyof Omit<Judge, 'id' | 'specialCriteria'>, value: string) => {
     setJudges(prev => prev.map(judge => 
       judge.id === judgeId ? { ...judge, [field]: value } : judge
     ));
   }, []);
 
-  const updateSpecialCriteria = useCallback((judgeId: number, index: number, value: number) => {
+  const updateSpecialCriteria = useCallback((judgeId: number, index: number, value: string) => {
     setJudges(prev => prev.map(judge => 
       judge.id === judgeId 
         ? { 
@@ -66,7 +66,7 @@ const TalentCalculator = () => {
   const addSpecialCriteria = useCallback((judgeId: number) => {
     setJudges(prev => prev.map(judge => 
       judge.id === judgeId 
-        ? { ...judge, specialCriteria: [...judge.specialCriteria, 0] }
+        ? { ...judge, specialCriteria: [...judge.specialCriteria, ''] }
         : judge
     ));
   }, []);
@@ -85,8 +85,11 @@ const TalentCalculator = () => {
   const calculateResults = useCallback(() => {
     // Calculate judge averages
     const judgeAverages = judges.map(judge => {
-      const specialCriteriaAverage = judge.specialCriteria.reduce((sum, criteria) => sum + criteria, 0) / judge.specialCriteria.length;
-      return (judge.creativity + judge.quality + specialCriteriaAverage) / 3;
+      const creativity = parseFloat(judge.creativity) || 0;
+      const quality = parseFloat(judge.quality) || 0;
+      const specialCriteriaSum = judge.specialCriteria.reduce((sum, criteria) => sum + (parseFloat(criteria) || 0), 0);
+      const specialCriteriaAverage = specialCriteriaSum / judge.specialCriteria.length;
+      return (creativity + quality + specialCriteriaAverage) / 3;
     });
 
     // Overall judges average
@@ -96,7 +99,9 @@ const TalentCalculator = () => {
     const judgesScore = overallJudgesAverage * 0.75;
     
     // Audience score (25% weight)
-    const audienceAverage = audienceVoters > 0 ? totalAudiencePoints / audienceVoters : 0;
+    const audienceVoterCount = parseFloat(audienceVoters) || 0;
+    const audiencePointsTotal = parseFloat(totalAudiencePoints) || 0;
+    const audienceAverage = audienceVoterCount > 0 ? audiencePointsTotal / audienceVoterCount : 0;
     const audienceScore = audienceAverage * 0.25;
     
     // Final score
@@ -185,10 +190,11 @@ const TalentCalculator = () => {
                             id={`creativity-${judge.id}`}
                             type="number"
                             value={judge.creativity}
-                            onChange={(e) => updateJudge(judge.id, 'creativity', parseFloat(e.target.value) || 0)}
+                            onChange={(e) => updateJudge(judge.id, 'creativity', e.target.value)}
                             min="0"
                             max="10"
                             step="0.1"
+                            placeholder="0"
                           />
                         </div>
                         <div>
@@ -197,10 +203,11 @@ const TalentCalculator = () => {
                             id={`quality-${judge.id}`}
                             type="number"
                             value={judge.quality}
-                            onChange={(e) => updateJudge(judge.id, 'quality', parseFloat(e.target.value) || 0)}
+                            onChange={(e) => updateJudge(judge.id, 'quality', e.target.value)}
                             min="0"
                             max="10"
                             step="0.1"
+                            placeholder="0"
                           />
                         </div>
                       </div>
@@ -222,7 +229,7 @@ const TalentCalculator = () => {
                               <Input
                                 type="number"
                                 value={criteria}
-                                onChange={(e) => updateSpecialCriteria(judge.id, index, parseFloat(e.target.value) || 0)}
+                                onChange={(e) => updateSpecialCriteria(judge.id, index, e.target.value)}
                                 min="0"
                                 max="10"
                                 step="0.1"
@@ -262,9 +269,10 @@ const TalentCalculator = () => {
                     id="audienceVoters"
                     type="number"
                     value={audienceVoters}
-                    onChange={(e) => setAudienceVoters(parseInt(e.target.value) || 0)}
+                    onChange={(e) => setAudienceVoters(e.target.value)}
                     min="0"
                     className="mt-1"
+                    placeholder="0"
                   />
                 </div>
                 <div>
@@ -273,10 +281,11 @@ const TalentCalculator = () => {
                     id="totalPoints"
                     type="number"
                     value={totalAudiencePoints}
-                    onChange={(e) => setTotalAudiencePoints(parseFloat(e.target.value) || 0)}
+                    onChange={(e) => setTotalAudiencePoints(e.target.value)}
                     min="0"
                     step="0.1"
                     className="mt-1"
+                    placeholder="0"
                   />
                   <p className="text-xs text-muted-foreground mt-1">
                     Each voter gives 1-10 points. Total = sum of all votes.
