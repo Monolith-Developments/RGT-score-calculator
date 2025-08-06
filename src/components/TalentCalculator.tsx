@@ -148,19 +148,26 @@ const TalentCalculator = () => {
         {/* Header */}
         <div className="text-center space-y-4 animate-fade-in">
           <div className="flex items-center justify-center gap-4 mb-4">
-            {/* Logo placeholder */}
-            <div className="w-12 h-12 bg-gradient-to-br from-gold to-gold-dark rounded-full flex items-center justify-center">
-              <Crown className="w-6 h-6 text-background" />
-            </div>
+            {/* Rustic Kingdom Logo */}
+            <img 
+              src="/lovable-uploads/4acaf5e0-c6b0-41dd-a269-56b867d21aab.png" 
+              alt="Rustic Kingdom Logo" 
+              className="w-16 h-16 object-contain"
+            />
             <h1 className="text-4xl font-bold font-royal bg-gradient-to-r from-gold to-gold-dark bg-clip-text text-transparent">
               {t('title')}
             </h1>
-            <div className="w-12 h-12 bg-gradient-to-br from-gold to-gold-dark rounded-full flex items-center justify-center">
-              <Crown className="w-6 h-6 text-background" />
-            </div>
+            <img 
+              src="/lovable-uploads/4acaf5e0-c6b0-41dd-a269-56b867d21aab.png" 
+              alt="Rustic Kingdom Logo" 
+              className="w-16 h-16 object-contain"
+            />
           </div>
           <p className="text-muted-foreground text-lg font-elegant">
             {t('subtitle')}
+          </p>
+          <p className="text-gold text-sm font-elegant italic">
+            {t('corpsMessage')}
           </p>
           
           {/* Theme and Language toggles */}
@@ -234,14 +241,22 @@ const TalentCalculator = () => {
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
                         <CardTitle className="text-lg">{t('judge')} {judge.id}</CardTitle>
-                        <div className="flex items-center gap-2">
-                          <Label className="text-xs text-muted-foreground">
-                            {judge.halfWeight ? t('halfWeight') : t('fullWeight')}
-                          </Label>
-                          <Switch
-                            checked={judge.halfWeight}
-                            onCheckedChange={(checked) => updateJudge(judge.id, 'halfWeight', checked)}
-                          />
+                        <div className="flex items-center gap-3">
+                          <div className="text-center">
+                            <div className="text-xs text-muted-foreground mb-1">{t('impactToggle')}</div>
+                            <div className="flex items-center gap-2">
+                              <span className={`text-xs ${!judge.halfWeight ? 'text-gold font-semibold' : 'text-muted-foreground'}`}>
+                                {t('fullImpact')}
+                              </span>
+                              <Switch
+                                checked={judge.halfWeight}
+                                onCheckedChange={(checked) => updateJudge(judge.id, 'halfWeight', checked)}
+                              />
+                              <span className={`text-xs ${judge.halfWeight ? 'text-gold font-semibold' : 'text-muted-foreground'}`}>
+                                {t('halfImpact')}
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </CardHeader>
@@ -322,7 +337,7 @@ const TalentCalculator = () => {
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-2 text-gold font-royal">
                   <Users className="w-5 h-5" />
-                  {t('audienceHalfWeight')}
+                  {t('audienceHalfImpact')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -362,7 +377,7 @@ const TalentCalculator = () => {
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-2 text-gold font-royal">
                   <Users className="w-5 h-5" />
-                  {t('audienceFullWeight')}
+                  {t('audienceFullImpact')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -456,7 +471,7 @@ const TalentCalculator = () => {
                       <div className="space-y-1">
                         {results.judgeAverages.map((avg, index) => (
                           <div key={index} className="flex justify-between text-sm">
-                            <span>{t('judge')} {index + 1} {judges[index]?.halfWeight ? `(${t('halfWeight')})` : ''}:</span>
+                            <span>{t('judge')} {index + 1} {judges[index]?.halfWeight ? `(${t('halfImpact')})` : ''}:</span>
                             <span className="font-mono">{avg.toFixed(2)}</span>
                           </div>
                         ))}
