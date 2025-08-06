@@ -4,13 +4,22 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { Plus, Minus, Crown, Trophy, Users, Calculator } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Plus, Minus, Crown, Trophy, Users, Calculator, Sun, Moon, Languages } from 'lucide-react';
+import { useTheme } from '@/contexts/ThemeContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Judge {
   id: number;
   creativity: string;
   quality: string;
   specialCriteria: string[];
+  halfWeight: boolean;
+}
+
+interface AudienceVoting {
+  voters: string;
+  totalPoints: string;
 }
 
 interface CalculationResults {
@@ -23,14 +32,17 @@ interface CalculationResults {
 }
 
 const TalentCalculator = () => {
+  const { theme, toggleTheme } = useTheme();
+  const { language, toggleLanguage, t } = useLanguage();
+  
   const [numJudges, setNumJudges] = useState<number>(3);
   const [judges, setJudges] = useState<Judge[]>([
-    { id: 1, creativity: '', quality: '', specialCriteria: [''] },
-    { id: 2, creativity: '', quality: '', specialCriteria: [''] },
-    { id: 3, creativity: '', quality: '', specialCriteria: [''] }
+    { id: 1, creativity: '', quality: '', specialCriteria: [''], halfWeight: false },
+    { id: 2, creativity: '', quality: '', specialCriteria: [''], halfWeight: false },
+    { id: 3, creativity: '', quality: '', specialCriteria: [''], halfWeight: false }
   ]);
-  const [audienceVoters, setAudienceVoters] = useState<string>('');
-  const [totalAudiencePoints, setTotalAudiencePoints] = useState<string>('');
+  const [audienceHalfWeight, setAudienceHalfWeight] = useState<AudienceVoting>({ voters: '', totalPoints: '' });
+  const [audienceFullWeight, setAudienceFullWeight] = useState<AudienceVoting>({ voters: '', totalPoints: '' });
   const [results, setResults] = useState<CalculationResults | null>(null);
 
   const updateNumJudges = useCallback((newNum: number) => {
@@ -39,12 +51,12 @@ const TalentCalculator = () => {
     
     const newJudges = Array.from({ length: newNum }, (_, i) => {
       const existingJudge = judges[i];
-      return existingJudge || { id: i + 1, creativity: '', quality: '', specialCriteria: [''] };
+      return existingJudge || { id: i + 1, creativity: '', quality: '', specialCriteria: [''], halfWeight: false };
     });
     setJudges(newJudges);
   }, [judges]);
 
-  const updateJudge = useCallback((judgeId: number, field: keyof Omit<Judge, 'id' | 'specialCriteria'>, value: string) => {
+  const updateJudge = useCallback((judgeId: number, field: keyof Omit<Judge, 'id' | 'specialCriteria'>, value: string | boolean) => {
     setJudges(prev => prev.map(judge => 
       judge.id === judgeId ? { ...judge, [field]: value } : judge
     ));
@@ -83,13 +95,14 @@ const TalentCalculator = () => {
   }, []);
 
   const calculateResults = useCallback(() => {
-    // Calculate judge averages
+    // Calculate judge averages with weights
     const judgeAverages = judges.map(judge => {
       const creativity = parseFloat(judge.creativity) || 0;
       const quality = parseFloat(judge.quality) || 0;
       const specialCriteriaSum = judge.specialCriteria.reduce((sum, criteria) => sum + (parseFloat(criteria) || 0), 0);
       const specialCriteriaAverage = specialCriteriaSum / judge.specialCriteria.length;
-      return (creativity + quality + specialCriteriaAverage) / 3;
+      const judgeAverage = (creativity + quality + specialCriteriaAverage) / 3;
+      return judgeAverage * (judge.halfWeight ? 0.5 : 1);
     });
 
     // Overall judges average
@@ -98,11 +111,17 @@ const TalentCalculator = () => {
     // Judges score (75% weight)
     const judgesScore = overallJudgesAverage * 0.75;
     
-    // Audience score (25% weight)
-    const audienceVoterCount = parseFloat(audienceVoters) || 0;
-    const audiencePointsTotal = parseFloat(totalAudiencePoints) || 0;
-    const audienceAverage = audienceVoterCount > 0 ? audiencePointsTotal / audienceVoterCount : 0;
-    const audienceScore = audienceAverage * 0.25;
+    // Audience scores
+    const halfWeightVoters = parseFloat(audienceHalfWeight.voters) || 0;
+    const halfWeightPoints = parseFloat(audienceHalfWeight.totalPoints) || 0;
+    const halfWeightAverage = halfWeightVoters > 0 ? (halfWeightPoints / halfWeightVoters) * 0.5 : 0;
+    
+    const fullWeightVoters = parseFloat(audienceFullWeight.voters) || 0;
+    const fullWeightPoints = parseFloat(audienceFullWeight.totalPoints) || 0;
+    const fullWeightAverage = fullWeightVoters > 0 ? fullWeightPoints / fullWeightVoters : 0;
+    
+    const combinedAudienceAverage = halfWeightAverage + fullWeightAverage;
+    const audienceScore = combinedAudienceAverage * 0.25;
     
     // Final score
     const finalScore = judgesScore + audienceScore;
@@ -112,26 +131,59 @@ const TalentCalculator = () => {
       judgesScore,
       audienceScore,
       overallJudgesAverage,
-      audienceAverage,
-      judgeAverages
+      audienceAverage: combinedAudienceAverage,
+      judgeAverages: judges.map(judge => {
+        const creativity = parseFloat(judge.creativity) || 0;
+        const quality = parseFloat(judge.quality) || 0;
+        const specialCriteriaSum = judge.specialCriteria.reduce((sum, criteria) => sum + (parseFloat(criteria) || 0), 0);
+        const specialCriteriaAverage = specialCriteriaSum / judge.specialCriteria.length;
+        return (creativity + quality + specialCriteriaAverage) / 3;
+      })
     });
-  }, [judges, audienceVoters, totalAudiencePoints]);
+  }, [judges, audienceHalfWeight, audienceFullWeight]);
 
   return (
     <div className="min-h-screen bg-background py-8 px-4">
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Header */}
         <div className="text-center space-y-4 animate-fade-in">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Crown className="w-8 h-8 text-gold animate-glow" />
+          <div className="flex items-center justify-center gap-4 mb-4">
+            {/* Logo placeholder */}
+            <div className="w-12 h-12 bg-gradient-to-br from-gold to-gold-dark rounded-full flex items-center justify-center">
+              <Crown className="w-6 h-6 text-background" />
+            </div>
             <h1 className="text-4xl font-bold font-royal bg-gradient-to-r from-gold to-gold-dark bg-clip-text text-transparent">
-              Rustic Got Talent Calculator
+              {t('title')}
             </h1>
-            <Crown className="w-8 h-8 text-gold animate-glow" />
+            <div className="w-12 h-12 bg-gradient-to-br from-gold to-gold-dark rounded-full flex items-center justify-center">
+              <Crown className="w-6 h-6 text-background" />
+            </div>
           </div>
           <p className="text-muted-foreground text-lg font-elegant">
-            Calculate contestant scores based on judges' ratings and audience votes
+            {t('subtitle')}
           </p>
+          
+          {/* Theme and Language toggles */}
+          <div className="flex items-center justify-center gap-4 mt-6">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={toggleTheme}
+              className="flex items-center gap-2"
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              {theme === 'dark' ? 'Light' : 'Dark'}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={toggleLanguage}
+              className="flex items-center gap-2"
+            >
+              <Languages className="w-4 h-4" />
+              {language === 'en' ? 'العربية' : 'English'}
+            </Button>
+          </div>
         </div>
 
         {/* Main Calculator */}
@@ -143,12 +195,12 @@ const TalentCalculator = () => {
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-2 text-gold font-royal">
                   <Trophy className="w-5 h-5" />
-                  Judges Configuration
+                  {t('judgesConfig')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center gap-4">
-                  <Label htmlFor="numJudges" className="text-sm font-medium">Number of Judges:</Label>
+                  <Label htmlFor="numJudges" className="text-sm font-medium">{t('numJudges')}</Label>
                   <div className="flex items-center gap-2">
                     <Button
                       variant="outline"
@@ -180,12 +232,23 @@ const TalentCalculator = () => {
                 {judges.map((judge, judgeIndex) => (
                   <Card key={judge.id} className="border-muted bg-muted/30">
                     <CardHeader className="pb-3">
-                      <CardTitle className="text-lg">Judge {judge.id}</CardTitle>
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-lg">{t('judge')} {judge.id}</CardTitle>
+                        <div className="flex items-center gap-2">
+                          <Label className="text-xs text-muted-foreground">
+                            {judge.halfWeight ? t('halfWeight') : t('fullWeight')}
+                          </Label>
+                          <Switch
+                            checked={judge.halfWeight}
+                            onCheckedChange={(checked) => updateJudge(judge.id, 'halfWeight', checked)}
+                          />
+                        </div>
+                      </div>
                     </CardHeader>
                     <CardContent className="space-y-3">
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <Label htmlFor={`creativity-${judge.id}`} className="text-sm">Creativity (0-10)</Label>
+                          <Label htmlFor={`creativity-${judge.id}`} className="text-sm">{t('creativity')}</Label>
                           <Input
                             id={`creativity-${judge.id}`}
                             type="number"
@@ -198,7 +261,7 @@ const TalentCalculator = () => {
                           />
                         </div>
                         <div>
-                          <Label htmlFor={`quality-${judge.id}`} className="text-sm">Quality (0-10)</Label>
+                          <Label htmlFor={`quality-${judge.id}`} className="text-sm">{t('quality')}</Label>
                           <Input
                             id={`quality-${judge.id}`}
                             type="number"
@@ -214,7 +277,7 @@ const TalentCalculator = () => {
 
                       <div>
                         <div className="flex items-center justify-between mb-2">
-                          <Label className="text-sm">Special Criteria</Label>
+                          <Label className="text-sm">{t('specialCriteria')}</Label>
                           <Button
                             variant="outline"
                             size="sm"
@@ -233,7 +296,7 @@ const TalentCalculator = () => {
                                 min="0"
                                 max="10"
                                 step="0.1"
-                                placeholder={`Criteria ${index + 1}`}
+                                placeholder={`${t('criteria')} ${index + 1}`}
                               />
                               {judge.specialCriteria.length > 1 && (
                                 <Button
@@ -254,41 +317,81 @@ const TalentCalculator = () => {
               </CardContent>
             </Card>
 
-            {/* Audience Voting */}
+            {/* Audience Voting - Half Weight */}
             <Card className="border-gold/20 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-gold/30">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-2 text-gold font-royal">
                   <Users className="w-5 h-5" />
-                  Audience Voting
+                  {t('audienceHalfWeight')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="audienceVoters" className="text-sm font-medium">Number of Audience Voters</Label>
+                  <Label htmlFor="audienceHalfVoters" className="text-sm font-medium">{t('numVoters')}</Label>
                   <Input
-                    id="audienceVoters"
+                    id="audienceHalfVoters"
                     type="number"
-                    value={audienceVoters}
-                    onChange={(e) => setAudienceVoters(e.target.value)}
+                    value={audienceHalfWeight.voters}
+                    onChange={(e) => setAudienceHalfWeight(prev => ({ ...prev, voters: e.target.value }))}
                     min="0"
                     className="mt-1"
                     placeholder="0"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="totalPoints" className="text-sm font-medium">Total Audience Points</Label>
+                  <Label htmlFor="audienceHalfPoints" className="text-sm font-medium">{t('totalPoints')}</Label>
                   <Input
-                    id="totalPoints"
+                    id="audienceHalfPoints"
                     type="number"
-                    value={totalAudiencePoints}
-                    onChange={(e) => setTotalAudiencePoints(e.target.value)}
+                    value={audienceHalfWeight.totalPoints}
+                    onChange={(e) => setAudienceHalfWeight(prev => ({ ...prev, totalPoints: e.target.value }))}
                     min="0"
                     step="0.1"
                     className="mt-1"
                     placeholder="0"
                   />
                   <p className="text-xs text-muted-foreground mt-1">
-                    Each voter gives 1-10 points. Total = sum of all votes.
+                    {t('voterDescription')}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Audience Voting - Full Weight */}
+            <Card className="border-gold/20 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-gold/30">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2 text-gold font-royal">
+                  <Users className="w-5 h-5" />
+                  {t('audienceFullWeight')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="audienceFullVoters" className="text-sm font-medium">{t('numVoters')}</Label>
+                  <Input
+                    id="audienceFullVoters"
+                    type="number"
+                    value={audienceFullWeight.voters}
+                    onChange={(e) => setAudienceFullWeight(prev => ({ ...prev, voters: e.target.value }))}
+                    min="0"
+                    className="mt-1"
+                    placeholder="0"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="audienceFullPoints" className="text-sm font-medium">{t('totalPoints')}</Label>
+                  <Input
+                    id="audienceFullPoints"
+                    type="number"
+                    value={audienceFullWeight.totalPoints}
+                    onChange={(e) => setAudienceFullWeight(prev => ({ ...prev, totalPoints: e.target.value }))}
+                    min="0"
+                    step="0.1"
+                    className="mt-1"
+                    placeholder="0"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {t('voterDescription')}
                   </p>
                 </div>
               </CardContent>
@@ -302,7 +405,7 @@ const TalentCalculator = () => {
               className="w-full"
             >
               <Calculator className="w-5 h-5 mr-2" />
-              Calculate Result
+              {t('calculateResult')}
             </Button>
           </div>
 
@@ -313,30 +416,30 @@ const TalentCalculator = () => {
                 {/* Final Score */}
                 <Card className="border-gold/40 shadow-xl bg-gradient-to-br from-card to-muted/20">
                   <CardHeader className="text-center pb-4">
-                    <CardTitle className="text-2xl text-gold">Final Score</CardTitle>
+                    <CardTitle className="text-2xl text-gold">{t('finalScore')}</CardTitle>
                   </CardHeader>
                   <CardContent className="text-center">
                     <div className="text-6xl font-bold bg-gradient-to-r from-gold to-gold-dark bg-clip-text text-transparent mb-2">
                       {results.finalScore.toFixed(2)}
                     </div>
-                    <p className="text-muted-foreground">out of 10.00</p>
+                    <p className="text-muted-foreground">{t('outOf')}</p>
                   </CardContent>
                 </Card>
 
                 {/* Score Breakdown */}
                 <Card className="border-gold/20 shadow-lg">
                   <CardHeader>
-                    <CardTitle className="text-gold">Score Breakdown</CardTitle>
+                    <CardTitle className="text-gold">{t('scoreBreakdown')}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="text-center p-4 bg-muted/30 rounded-lg">
                         <div className="text-2xl font-bold text-gold">{results.judgesScore.toFixed(2)}</div>
-                        <div className="text-sm text-muted-foreground">Judges' Score (75%)</div>
+                        <div className="text-sm text-muted-foreground">{t('judgesScore')}</div>
                       </div>
                       <div className="text-center p-4 bg-muted/30 rounded-lg">
                         <div className="text-2xl font-bold text-gold">{results.audienceScore.toFixed(2)}</div>
-                        <div className="text-sm text-muted-foreground">Audience Score (25%)</div>
+                        <div className="text-sm text-muted-foreground">{t('audienceScore')}</div>
                       </div>
                     </div>
                   </CardContent>
@@ -345,15 +448,15 @@ const TalentCalculator = () => {
                 {/* Detailed Calculations */}
                 <Card className="border-gold/20 shadow-lg">
                   <CardHeader>
-                    <CardTitle className="text-gold">Detailed Calculations</CardTitle>
+                    <CardTitle className="text-gold">{t('detailedCalculations')}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
-                      <h4 className="font-semibold mb-2">Judge Averages:</h4>
+                      <h4 className="font-semibold mb-2">{t('judgeAverages')}</h4>
                       <div className="space-y-1">
                         {results.judgeAverages.map((avg, index) => (
                           <div key={index} className="flex justify-between text-sm">
-                            <span>Judge {index + 1}:</span>
+                            <span>{t('judge')} {index + 1} {judges[index]?.halfWeight ? `(${t('halfWeight')})` : ''}:</span>
                             <span className="font-mono">{avg.toFixed(2)}</span>
                           </div>
                         ))}
@@ -364,11 +467,11 @@ const TalentCalculator = () => {
                     
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <span className="text-muted-foreground">Overall Judges Average:</span>
+                        <span className="text-muted-foreground">{t('overallJudgesAverage')}</span>
                         <div className="font-mono">{results.overallJudgesAverage.toFixed(2)}</div>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">Audience Average:</span>
+                        <span className="text-muted-foreground">{t('audienceAverage')}</span>
                         <div className="font-mono">{results.audienceAverage.toFixed(2)}</div>
                       </div>
                     </div>
@@ -376,9 +479,9 @@ const TalentCalculator = () => {
                     <Separator />
                     
                     <div className="text-xs text-muted-foreground space-y-1">
-                      <div>• Judges' Score = Overall Judges Average × 0.75</div>
-                      <div>• Audience Score = Audience Average × 0.25</div>
-                      <div>• Final Score = Judges' Score + Audience Score</div>
+                      <div>{t('calculationNote1')}</div>
+                      <div>{t('calculationNote2')}</div>
+                      <div>{t('calculationNote3')}</div>
                     </div>
                   </CardContent>
                 </Card>
@@ -390,13 +493,20 @@ const TalentCalculator = () => {
                 <CardContent className="text-center py-12">
                   <Calculator className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                   <p className="text-muted-foreground">
-                    Enter scores and click "Calculate Result" to see the final score and breakdown.
+                    {t('enterScores')}
                   </p>
                 </CardContent>
               </Card>
             )}
           </div>
         </div>
+        
+        {/* Footer */}
+        <footer className="text-center py-6 border-t border-gold/20">
+          <p className="text-sm text-muted-foreground">
+            {t('copyright')}
+          </p>
+        </footer>
       </div>
     </div>
   );
