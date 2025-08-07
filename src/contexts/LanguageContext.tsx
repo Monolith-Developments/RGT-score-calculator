@@ -12,7 +12,7 @@ const translations = {
   en: {
     title: 'Rustic Got Talent Calculator',
     subtitle: 'Calculate contestant scores based on judges\' ratings and audience votes',
-    corpsMessage: 'Regards from the Corp of Talents',
+    corpsMessage: 'With regards of COT',
     judgesConfig: 'Judges Configuration',
     numJudges: 'Number of Judges:',
     judge: 'Judge',
@@ -46,9 +46,9 @@ const translations = {
     copyright: '© 2025 Rustic Kingdom 🗝️ | Developer: Adham'
   },
   ar: {
-    title: 'حاسبة موهبة ريستيك',
+    title: 'حاسبة مواهب راستيك',
     subtitle: 'احسب نقاط المتسابقين بناءً على تقييمات الحكام وأصوات الجمهور',
-    corpsMessage: 'تحيات من مؤسسة المواهب',
+    corpsMessage: 'مع تحيات فيلق المواهب',
     judgesConfig: 'إعداد الحكام',
     numJudges: 'عدد الحكام:',
     judge: 'الحكم',
@@ -56,7 +56,7 @@ const translations = {
     quality: 'الجودة (0-10)',
     specialCriteria: 'معايير خاصة',
     criteria: 'معيار',
-    halfImpact: 'تأثير نصف',
+    halfImpact: 'نصف التأثير',
     fullImpact: 'تأثير كامل',
     impactToggle: 'مستوى التأثير',
     audienceVoting: 'تصويت الجمهور',
