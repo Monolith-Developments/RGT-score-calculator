@@ -254,22 +254,33 @@
             border-radius: calc(var(--radius) - 2px);
             font-size: 0.875rem;
             font-weight: 500;
-            transition: color, background-color 0.15s;
+            transition: all 0.2s ease;
             cursor: pointer;
-            border: 1px solid hsl(var(--border));
-            background-color: transparent;
-            color: hsl(var(--foreground));
+            border: 2px solid hsl(var(--border));
+            background-color: hsl(var(--background));
+            color: hsl(var(--muted-foreground));
             padding: 0.5rem 1rem;
             height: 2.25rem;
+            min-width: 5rem;
         }
         
         .toggle:hover {
             background-color: hsl(var(--muted));
+            border-color: hsl(var(--ring));
+            transform: translateY(-1px);
         }
         
         .toggle.active {
-            background-color: hsl(var(--accent));
-            color: hsl(var(--accent-foreground));
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            border-color: hsl(var(--primary));
+            font-weight: 600;
+            box-shadow: 0 2px 8px hsl(var(--primary) / 0.3);
+        }
+        
+        .toggle.active:hover {
+            background-color: hsl(var(--primary) / 0.9);
+            transform: translateY(-1px);
         }
         
         /* Special styles */
