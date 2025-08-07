@@ -1,27 +1,876 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rustic Got Talent Calculator</title>
-    <meta name="description" content="Calculate contestant scores in talent competitions based on judges' ratings and audience votes" />
-    <meta name="author" content="Lovable" />
+    <meta name="description" content="Calculate contestant scores in talent competitions based on judges' ratings and audience votes">
+    <meta name="author" content="Lovable">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Reset and base styles */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            border-color: hsl(var(--border));
+        }
+        
+        :root {
+            /* Kingdom Dark Theme */
+            --background: 240 10% 8%;
+            --foreground: 42 85% 90%;
+            --card: 240 8% 12%;
+            --card-foreground: 42 85% 90%;
+            --popover: 240 8% 12%;
+            --popover-foreground: 42 85% 90%;
+            --primary: 42 85% 55%;
+            --primary-foreground: 240 10% 8%;
+            --secondary: 240 6% 18%;
+            --secondary-foreground: 42 85% 90%;
+            --muted: 240 6% 16%;
+            --muted-foreground: 42 30% 60%;
+            --accent: 42 75% 45%;
+            --accent-foreground: 240 10% 8%;
+            --destructive: 0 84.2% 60.2%;
+            --destructive-foreground: 42 85% 90%;
+            --border: 240 6% 20%;
+            --input: 240 6% 16%;
+            --ring: 42 85% 55%;
+            
+            /* Kingdom specific colors */
+            --gold: 42 85% 55%;
+            --gold-dark: 42 75% 45%;
+            --royal-purple: 260 50% 35%;
+            --kingdom-shadow: 240 20% 4%;
+            
+            --sidebar-background: 0 0% 98%;
+            --sidebar-foreground: 240 5.3% 26.1%;
+            --sidebar-primary: 240 5.9% 10%;
+            --sidebar-primary-foreground: 0 0% 98%;
+            --sidebar-accent: 240 4.8% 95.9%;
+            --sidebar-accent-foreground: 240 5.9% 10%;
+            --sidebar-border: 220 13% 91%;
+            --sidebar-ring: 217.2 91.2% 59.8%;
+            --radius: 0.5rem;
+        }
+        
+        .light {
+            /* Light Kingdom Theme */
+            --background: 42 45% 96%;
+            --foreground: 240 10% 15%;
+            --card: 42 20% 98%;
+            --card-foreground: 240 10% 15%;
+            --popover: 42 20% 98%;
+            --popover-foreground: 240 10% 15%;
+            --primary: 42 85% 45%;
+            --primary-foreground: 42 45% 96%;
+            --secondary: 42 30% 92%;
+            --secondary-foreground: 240 10% 15%;
+            --muted: 42 20% 94%;
+            --muted-foreground: 240 10% 45%;
+            --accent: 42 75% 35%;
+            --accent-foreground: 42 45% 96%;
+            --destructive: 0 84.2% 50%;
+            --destructive-foreground: 42 45% 96%;
+            --border: 42 30% 85%;
+            --input: 42 20% 94%;
+            --ring: 42 85% 45%;
+            
+            /* Kingdom specific colors for light mode */
+            --gold: 42 85% 45%;
+            --gold-dark: 42 75% 35%;
+            --royal-purple: 260 50% 55%;
+            --kingdom-shadow: 240 20% 85%;
+            
+            --sidebar-background: 240 5.9% 10%;
+            --sidebar-foreground: 240 4.8% 95.9%;
+            --sidebar-primary: 224.3 76.3% 48%;
+            --sidebar-primary-foreground: 0 0% 100%;
+            --sidebar-accent: 240 3.7% 15.9%;
+            --sidebar-accent-foreground: 240 4.8% 95.9%;
+            --sidebar-border: 240 3.7% 15.9%;
+            --sidebar-ring: 217.2 91.2% 59.8%;
+        }
+        
+        body {
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            font-family: 'Cormorant Garamond', serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Utility classes */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .flex-wrap { flex-wrap: wrap; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-4 { gap: 1rem; }
+        .gap-6 { gap: 1.5rem; }
+        .gap-8 { gap: 2rem; }
+        .w-full { width: 100%; }
+        .h-full { height: 100%; }
+        .min-h-screen { min-height: 100vh; }
+        .p-4 { padding: 1rem; }
+        .p-6 { padding: 1.5rem; }
+        .p-8 { padding: 2rem; }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+        .py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-8 { margin-top: 2rem; }
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .text-right { text-align: right; }
+        .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+        .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+        .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+        .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+        .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+        .font-bold { font-weight: 700; }
+        .font-medium { font-weight: 500; }
+        .opacity-60 { opacity: 0.6; }
+        .rounded-lg { border-radius: calc(var(--radius) - 2px); }
+        .border { border-width: 1px; }
+        .transition-colors { transition-property: color, background-color, border-color; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+        .hover\:opacity-80:hover { opacity: 0.8; }
+        .focus\:outline-none:focus { outline: 2px solid transparent; outline-offset: 2px; }
+        .focus\:ring-2:focus { box-shadow: 0 0 0 2px hsl(var(--ring)); }
+        .grid { display: grid; }
+        .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+        .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .lg\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        
+        /* Card styles */
+        .card {
+            background-color: hsl(var(--card));
+            color: hsl(var(--card-foreground));
+            border: 1px solid hsl(var(--border));
+            border-radius: calc(var(--radius) - 2px);
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+        
+        /* Button styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: calc(var(--radius) - 2px);
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color, background-color, border-color, box-shadow 0.15s;
+            cursor: pointer;
+            border: none;
+            padding: 0.5rem 1rem;
+            height: 2.5rem;
+        }
+        
+        .btn-primary {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+        
+        .btn-primary:hover {
+            background-color: hsl(var(--primary) / 0.9);
+        }
+        
+        .btn-secondary {
+            background-color: hsl(var(--secondary));
+            color: hsl(var(--secondary-foreground));
+        }
+        
+        .btn-secondary:hover {
+            background-color: hsl(var(--secondary) / 0.8);
+        }
+        
+        .btn-outline {
+            border: 1px solid hsl(var(--border));
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+        }
+        
+        .btn-outline:hover {
+            background-color: hsl(var(--accent));
+            color: hsl(var(--accent-foreground));
+        }
+        
+        .btn-destructive {
+            background-color: hsl(var(--destructive));
+            color: hsl(var(--destructive-foreground));
+        }
+        
+        .btn-destructive:hover {
+            background-color: hsl(var(--destructive) / 0.9);
+        }
+        
+        /* Input styles */
+        .input {
+            display: flex;
+            height: 2.5rem;
+            width: 100%;
+            border-radius: calc(var(--radius) - 2px);
+            border: 1px solid hsl(var(--border));
+            background-color: hsl(var(--background));
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            transition: border-color 0.15s;
+            color: hsl(var(--foreground));
+        }
+        
+        .input:focus {
+            outline: none;
+            border-color: hsl(var(--ring));
+            box-shadow: 0 0 0 2px hsl(var(--ring) / 0.2);
+        }
+        
+        .input::placeholder {
+            color: hsl(var(--muted-foreground));
+        }
+        
+        /* Label styles */
+        .label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            line-height: 1;
+            color: hsl(var(--foreground));
+        }
+        
+        /* Toggle styles */
+        .toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: calc(var(--radius) - 2px);
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 2px solid hsl(var(--border));
+            background-color: hsl(var(--background));
+            color: hsl(var(--muted-foreground));
+            padding: 0.5rem 1rem;
+            height: 2.25rem;
+            min-width: 5rem;
+        }
+        
+        .toggle:hover {
+            background-color: hsl(var(--muted));
+            border-color: hsl(var(--ring));
+            transform: translateY(-1px);
+        }
+        
+        .toggle.active {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            border-color: hsl(var(--primary));
+            font-weight: 600;
+            box-shadow: 0 2px 8px hsl(var(--primary) / 0.3);
+        }
+        
+        .toggle.active:hover {
+            background-color: hsl(var(--primary) / 0.9);
+            transform: translateY(-1px);
+        }
+        
+        /* Special styles */
+        .gradient-text {
+            background: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--royal-purple)));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: 'Cinzel', serif;
+        }
+        
+        .logo {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid hsl(var(--gold) / 0.3);
+            box-shadow: 0 0 20px hsl(var(--gold) / 0.2);
+        }
+        
+        /* Animations */
+        @keyframes fade-in {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes scale-in {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px hsl(var(--gold) / 0.3); }
+            50% { box-shadow: 0 0 30px hsl(var(--gold) / 0.5), 0 0 40px hsl(var(--gold) / 0.3); }
+        }
+        
+        .animate-fade-in { animation: fade-in 0.6s ease-out; }
+        .animate-scale-in { animation: scale-in 0.4s ease-out; }
+        .animate-glow { animation: glow 2s ease-in-out infinite alternate; }
+        
+        /* Enhanced button styles */
+        .btn-kingdom {
+            background: linear-gradient(135deg, hsl(var(--gold-dark)), hsl(var(--gold)));
+            color: hsl(var(--primary-foreground));
+            box-shadow: 0 4px 15px hsl(var(--gold) / 0.3);
+            border: 1px solid hsl(var(--gold) / 0.3);
+            font-weight: 600;
+            transform: scale(1);
+            transition: all 0.2s ease;
+        }
+        
+        .btn-kingdom:hover {
+            background: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--gold-dark)));
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px hsl(var(--gold) / 0.4);
+        }
+        
+        /* Space utility */
+        .space-y-1 > * + * { margin-top: 0.25rem; }
+        .space-y-2 > * + * { margin-top: 0.5rem; }
+        .space-y-4 > * + * { margin-top: 1rem; }
+        .flex-1 { flex: 1 1 0%; }
+        
+        /* Enhanced card styling */
+        .card {
+            background-color: hsl(var(--card));
+            color: hsl(var(--card-foreground));
+            border: 1px solid hsl(var(--border));
+            border-radius: calc(var(--radius) - 2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+        
+        /* RTL support */
+        html[dir="rtl"] {
+            direction: rtl;
+        }
+        
+        html[dir="rtl"] .text-left {
+            text-align: right;
+        }
+        
+        html[dir="rtl"] .text-right {
+            text-align: left;
+        }
+        
+        /* Responsive */
+        @media (min-width: 768px) {
+            .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .md\:flex-row { flex-direction: row; }
+            .md\:items-center { align-items: center; }
+            .md\:justify-between { justify-content: space-between; }
+        }
+        
+        @media (min-width: 1024px) {
+            .lg\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+    </style>
+</head>
 
-    <meta property="og:title" content="rustic-talent-score" />
-    <meta property="og:description" content="Lovable Generated Project" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+<body>
+    <div id="app" class="min-h-screen">
+        <!-- Header -->
+        <header class="p-6 border-b">
+            <div class="container">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <img src="public/lovable-uploads/4acaf5e0-c6b0-41dd-a269-56b867d21aab.png" alt="Rustic Kingdom Logo" class="logo">
+                        <div>
+                            <h1 id="title" class="text-3xl font-bold gradient-text">Rustic Got Talent Calculator</h1>
+                            <p id="subtitle" class="text-lg opacity-60">Calculate contestant scores based on judges' ratings and audience votes</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button id="themeToggle" class="btn btn-outline">🌙</button>
+                        <button id="languageToggle" class="btn btn-outline">العربية</button>
+                    </div>
+                </div>
+                <p id="corpsMessage" class="text-center mt-4 text-sm opacity-60">With regards of COT</p>
+            </div>
+        </header>
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@lovable_dev" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-  </head>
+        <!-- Main Content -->
+        <main class="container py-8">
+            <div class="grid gap-8">
+                <!-- Judges Configuration -->
+                <div class="card p-6">
+                    <h2 id="judgesConfigTitle" class="text-2xl font-bold mb-6">Judges Configuration</h2>
+                    
+                    <div class="mb-6">
+                        <label for="numJudges" id="numJudgesLabel" class="label mb-2 block">Number of Judges:</label>
+                        <input type="number" id="numJudges" class="input" min="1" max="10" value="3">
+                    </div>
+                    
+                    <div id="judgesContainer" class="grid gap-6 lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
+                        <!-- Judges will be populated here -->
+                    </div>
+                </div>
 
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+                <!-- Audience Voting -->
+                <div class="card p-6">
+                    <h2 id="audienceVotingTitle" class="text-2xl font-bold mb-6">Audience Voting</h2>
+                    
+                    <!-- Half Impact Audience -->
+                    <div class="mb-6">
+                        <h3 id="audienceHalfTitle" class="text-lg font-medium mb-4">Audience Voting (Half Impact)</h3>
+                        <div class="grid gap-4 md:grid-cols-2">
+                            <div>
+                                <label for="halfAudienceVoters" id="numVotersHalfLabel" class="label mb-2 block">Number of Voters</label>
+                                <input type="number" id="halfAudienceVoters" class="input" min="0" value="0">
+                            </div>
+                            <div>
+                                <label for="halfAudiencePoints" id="totalPointsHalfLabel" class="label mb-2 block">Total Points</label>
+                                <input type="number" id="halfAudiencePoints" class="input" min="0" value="0">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Full Impact Audience -->
+                    <div class="mb-6">
+                        <h3 id="audienceFullTitle" class="text-lg font-medium mb-4">Audience Voting (Full Impact)</h3>
+                        <div class="grid gap-4 md:grid-cols-2">
+                            <div>
+                                <label for="fullAudienceVoters" id="numVotersFullLabel" class="label mb-2 block">Number of Voters</label>
+                                <input type="number" id="fullAudienceVoters" class="input" min="0" value="0">
+                            </div>
+                            <div>
+                                <label for="fullAudiencePoints" id="totalPointsFullLabel" class="label mb-2 block">Total Points</label>
+                                <input type="number" id="fullAudiencePoints" class="input" min="0" value="0">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p id="voterDescription" class="text-sm opacity-60">Each voter gives 1-10 points. Total = sum of all votes.</p>
+                </div>
+
+                <div class="text-center animate-fade-in">
+                    <button id="calculateBtn" class="btn btn-kingdom text-lg px-8 py-4 animate-scale-in">Calculate Result</button>
+                </div>
+
+                <!-- Results -->
+                <div id="resultsContainer" class="card p-6" style="display: none;">
+                    <h2 id="resultsTitle" class="text-2xl font-bold mb-6">Results</h2>
+                    
+                    <div class="text-center mb-8">
+                        <div class="text-4xl font-bold gradient-text mb-2">
+                            <span id="finalScore">0.00</span>
+                        </div>
+                        <div id="outOfText" class="text-lg opacity-60">out of 10.00</div>
+                    </div>
+                    
+                    <div class="grid gap-6 md:grid-cols-2">
+                        <div>
+                            <h3 id="scoreBreakdownTitle" class="text-lg font-medium mb-4">Score Breakdown</h3>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span id="judgesScoreLabel">Judges' Score:</span>
+                                    <span id="judgesScore">0.00</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span id="audienceScoreLabel">Audience Score:</span>
+                                    <span id="audienceScore">0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 id="detailedCalculationsTitle" class="text-lg font-medium mb-4">Detailed Calculations</h3>
+                            <div id="calculationDetails" class="text-sm space-y-1">
+                                <!-- Details will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Placeholder -->
+                <div id="placeholder" class="card p-6 text-center">
+                    <p id="placeholderText" class="opacity-60">Enter scores and click "Calculate Result" to see the final score and breakdown.</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="border-t p-6">
+            <div class="container text-center">
+                <p id="copyright" class="text-sm opacity-60">© 2025 Rustic Kingdom 🗝️ | Developer: Adham</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // State management
+        let state = {
+            theme: 'dark',
+            language: 'en',
+            numJudges: 3,
+            judges: [],
+            halfAudienceVoters: 0,
+            halfAudiencePoints: 0,
+            fullAudienceVoters: 0,
+            fullAudiencePoints: 0,
+            results: null
+        };
+
+        // Translations
+        const translations = {
+            en: {
+                title: 'Rustic Got Talent Calculator',
+                subtitle: 'Calculate contestant scores based on judges\' ratings and audience votes',
+                corpsMessage: 'With regards of COT',
+                judgesConfig: 'Judges Configuration',
+                numJudges: 'Number of Judges:',
+                judge: 'Judge',
+                creativity: 'Creativity (0-10)',
+                quality: 'Quality (0-10)',
+                specialCriteria: 'Special Criteria',
+                criteria: 'Criteria',
+                halfImpact: 'Half Impact',
+                fullImpact: 'Full Impact',
+                impactToggle: 'Impact Level',
+                audienceVoting: 'Audience Voting',
+                audienceHalfImpact: 'Audience Voting (Half Impact)',
+                audienceFullImpact: 'Audience Voting (Full Impact)',
+                numVoters: 'Number of Voters',
+                totalPoints: 'Total Points',
+                voterDescription: 'Each voter gives 1-10 points. Total = sum of all votes.',
+                calculateResult: 'Calculate Result',
+                finalScore: 'Final Score',
+                outOf: 'out of 10.00',
+                scoreBreakdown: 'Score Breakdown',
+                judgesScore: 'Judges\' Score',
+                audienceScore: 'Audience Score',
+                detailedCalculations: 'Detailed Calculations',
+                judgeAverages: 'Judge Averages:',
+                overallJudgesAverage: 'Overall Judges Average:',
+                audienceAverage: 'Audience Average:',
+                calculationNote1: '• Judges\' Score = Overall Judges Average × Impact',
+                calculationNote2: '• Audience Score = Audience Average × Impact',
+                calculationNote3: '• Final Score = Judges\' Score + Audience Score',
+                enterScores: 'Enter scores and click "Calculate Result" to see the final score and breakdown.',
+                copyright: '© 2025 Rustic Kingdom 🗝️ | Developer: Adham'
+            },
+            ar: {
+                title: 'حاسبة مواهب راستيك',
+                subtitle: 'احسب نقاط المتسابقين بناءً على تقييمات الحكام وأصوات الجمهور',
+                corpsMessage: 'مع تحيات فيلق المواهب',
+                judgesConfig: 'إعداد الحكام',
+                numJudges: 'عدد الحكام:',
+                judge: 'الحكم',
+                creativity: 'الإبداع (0-10)',
+                quality: 'الجودة (0-10)',
+                specialCriteria: 'معايير خاصة',
+                criteria: 'معيار',
+                halfImpact: 'نصف التأثير',
+                fullImpact: 'تأثير كامل',
+                impactToggle: 'مستوى التأثير',
+                audienceVoting: 'تصويت الجمهور',
+                audienceHalfImpact: 'تصويت الجمهور (تأثير نصف)',
+                audienceFullImpact: 'تصويت الجمهور (تأثير كامل)',
+                numVoters: 'عدد المصوتين',
+                totalPoints: 'إجمالي النقاط',
+                voterDescription: 'كل مصوت يعطي 1-10 نقاط. الإجمالي = مجموع جميع الأصوات.',
+                calculateResult: 'احسب النتيجة',
+                finalScore: 'النتيجة النهائية',
+                outOf: 'من 10.00',
+                scoreBreakdown: 'تفصيل النقاط',
+                judgesScore: 'نقاط الحكام',
+                audienceScore: 'نقاط الجمهور',
+                detailedCalculations: 'الحسابات التفصيلية',
+                judgeAverages: 'متوسطات الحكام:',
+                overallJudgesAverage: 'متوسط الحكام الإجمالي:',
+                audienceAverage: 'متوسط الجمهور:',
+                calculationNote1: '• نقاط الحكام = متوسط الحكام الإجمالي × التأثير',
+                calculationNote2: '• نقاط الجمهور = متوسط الجمهور × التأثير',
+                calculationNote3: '• النتيجة النهائية = نقاط الحكام + نقاط الجمهور',
+                enterScores: 'أدخل النقاط واضغط "احسب النتيجة" لرؤية النتيجة النهائية والتفصيل.',
+                copyright: '© 2025 مملكة ريستيك 🗝️ | المطور: أدهم'
+            }
+        };
+
+        // Translation function
+        function t(key) {
+            return translations[state.language][key] || key;
+        }
+
+        // Initialize judges
+        function initializeJudges() {
+            state.judges = Array.from({ length: state.numJudges }, (_, i) => ({
+                id: i + 1,
+                creativity: 0,
+                quality: 0,
+                specialCriteria: [],
+                halfWeight: false
+            }));
+        }
+
+        // Render judges
+        function renderJudges() {
+            const container = document.getElementById('judgesContainer');
+            container.innerHTML = '';
+
+            state.judges.forEach((judge, index) => {
+                const judgeCard = document.createElement('div');
+                judgeCard.className = 'card p-4';
+                judgeCard.innerHTML = `
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-medium">${t('judge')} ${judge.id}</h3>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm">${t('impactToggle')}:</span>
+                            <button class="toggle ${judge.halfWeight ? '' : 'active'}" 
+                                    onclick="toggleJudgeWeight(${index}, false)">
+                                ${t('fullImpact')}
+                            </button>
+                            <button class="toggle ${judge.halfWeight ? 'active' : ''}" 
+                                    onclick="toggleJudgeWeight(${index}, true)">
+                                ${t('halfImpact')}
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="label mb-2 block">${t('creativity')}</label>
+                            <input type="number" class="input" min="0" max="10" step="0.1" 
+                                   value="${judge.creativity}" 
+                                   onchange="updateJudgeField(${index}, 'creativity', this.value)">
+                        </div>
+                        
+                        <div>
+                            <label class="label mb-2 block">${t('quality')}</label>
+                            <input type="number" class="input" min="0" max="10" step="0.1" 
+                                   value="${judge.quality}" 
+                                   onchange="updateJudgeField(${index}, 'quality', this.value)">
+                        </div>
+                        
+                        <div>
+                            <label class="label mb-2 block">${t('specialCriteria')}</label>
+                            <div id="specialCriteria_${index}" class="space-y-2">
+                                ${judge.specialCriteria.map((criteria, cIndex) => `
+                                    <div class="flex gap-2">
+                                        <input type="number" class="input flex-1" min="0" max="10" step="0.1" 
+                                               value="${criteria}" 
+                                               onchange="updateSpecialCriteria(${index}, ${cIndex}, this.value)"
+                                               placeholder="${t('criteria')} ${cIndex + 1}">
+                                        <button class="btn btn-destructive" onclick="removeSpecialCriteria(${index}, ${cIndex})">×</button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <button class="btn btn-outline mt-2 w-full" onclick="addSpecialCriteria(${index})">
+                                + ${t('criteria')}
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(judgeCard);
+            });
+        }
+
+        // Update judge field
+        function updateJudgeField(index, field, value) {
+            state.judges[index][field] = parseFloat(value) || 0;
+        }
+
+        // Toggle judge weight
+        function toggleJudgeWeight(index, halfWeight) {
+            state.judges[index].halfWeight = halfWeight;
+            renderJudges();
+        }
+
+        // Add special criteria
+        function addSpecialCriteria(judgeIndex) {
+            state.judges[judgeIndex].specialCriteria.push(0);
+            renderJudges();
+        }
+
+        // Remove special criteria
+        function removeSpecialCriteria(judgeIndex, criteriaIndex) {
+            state.judges[judgeIndex].specialCriteria.splice(criteriaIndex, 1);
+            renderJudges();
+        }
+
+        // Update special criteria
+        function updateSpecialCriteria(judgeIndex, criteriaIndex, value) {
+            state.judges[judgeIndex].specialCriteria[criteriaIndex] = parseFloat(value) || 0;
+        }
+
+        // Calculate results
+        function calculateResults() {
+            const judgeScores = state.judges.map(judge => {
+                const baseScore = (judge.creativity + judge.quality + judge.specialCriteria.reduce((sum, c) => sum + c, 0)) / 
+                                (2 + judge.specialCriteria.length);
+                return baseScore * (judge.halfWeight ? 0.5 : 1);
+            });
+
+            const judgesAverage = judgeScores.reduce((sum, score) => sum + score, 0) / judgeScores.length || 0;
+
+            // Calculate audience scores
+            const halfAudienceAvg = state.halfAudienceVoters > 0 ? 
+                (state.halfAudiencePoints / state.halfAudienceVoters) * 0.5 : 0;
+            const fullAudienceAvg = state.fullAudienceVoters > 0 ? 
+                (state.fullAudiencePoints / state.fullAudienceVoters) : 0;
+            
+            const totalAudienceScore = halfAudienceAvg + fullAudienceAvg;
+            const finalScore = Math.min(judgesAverage + totalAudienceScore, 10);
+
+            state.results = {
+                finalScore,
+                judgesScore: judgesAverage,
+                audienceScore: totalAudienceScore,
+                judgeScores,
+                halfAudienceAvg,
+                fullAudienceAvg
+            };
+
+            renderResults();
+        }
+
+        // Render results
+        function renderResults() {
+            if (!state.results) return;
+
+            document.getElementById('resultsContainer').style.display = 'block';
+            document.getElementById('placeholder').style.display = 'none';
+
+            document.getElementById('finalScore').textContent = state.results.finalScore.toFixed(2);
+            document.getElementById('judgesScore').textContent = state.results.judgesScore.toFixed(2);
+            document.getElementById('audienceScore').textContent = state.results.audienceScore.toFixed(2);
+
+            const details = document.getElementById('calculationDetails');
+            details.innerHTML = `
+                <div>${t('judgeAverages')}</div>
+                ${state.results.judgeScores.map((score, i) => `
+                    <div>• ${t('judge')} ${i + 1}: ${score.toFixed(2)}</div>
+                `).join('')}
+                <div class="mt-2">${t('overallJudgesAverage')} ${state.results.judgesScore.toFixed(2)}</div>
+                <div>${t('audienceAverage')} ${state.results.audienceScore.toFixed(2)}</div>
+                <div class="mt-2">
+                    <div>${t('calculationNote1')}</div>
+                    <div>${t('calculationNote2')}</div>
+                    <div>${t('calculationNote3')}</div>
+                </div>
+            `;
+        }
+
+        // Toggle theme
+        function toggleTheme() {
+            state.theme = state.theme === 'dark' ? 'light' : 'dark';
+            document.documentElement.className = state.theme;
+            document.getElementById('themeToggle').textContent = state.theme === 'dark' ? '☀️' : '🌙';
+            localStorage.setItem('theme', state.theme);
+        }
+
+        // Toggle language
+        function toggleLanguage() {
+            state.language = state.language === 'en' ? 'ar' : 'en';
+            document.documentElement.dir = state.language === 'ar' ? 'rtl' : 'ltr';
+            document.getElementById('languageToggle').textContent = state.language === 'en' ? 'العربية' : 'English';
+            localStorage.setItem('language', state.language);
+            updateTranslations();
+        }
+
+        // Update translations
+        function updateTranslations() {
+            // Update static text elements
+            document.getElementById('title').textContent = t('title');
+            document.getElementById('subtitle').textContent = t('subtitle');
+            document.getElementById('corpsMessage').textContent = t('corpsMessage');
+            document.getElementById('judgesConfigTitle').textContent = t('judgesConfig');
+            document.getElementById('numJudgesLabel').textContent = t('numJudges');
+            document.getElementById('audienceVotingTitle').textContent = t('audienceVoting');
+            document.getElementById('audienceHalfTitle').textContent = t('audienceHalfImpact');
+            document.getElementById('audienceFullTitle').textContent = t('audienceFullImpact');
+            document.getElementById('numVotersHalfLabel').textContent = t('numVoters');
+            document.getElementById('totalPointsHalfLabel').textContent = t('totalPoints');
+            document.getElementById('numVotersFullLabel').textContent = t('numVoters');
+            document.getElementById('totalPointsFullLabel').textContent = t('totalPoints');
+            document.getElementById('voterDescription').textContent = t('voterDescription');
+            document.getElementById('calculateBtn').textContent = t('calculateResult');
+            document.getElementById('resultsTitle').textContent = t('finalScore');
+            document.getElementById('outOfText').textContent = t('outOf');
+            document.getElementById('scoreBreakdownTitle').textContent = t('scoreBreakdown');
+            document.getElementById('judgesScoreLabel').textContent = t('judgesScore') + ':';
+            document.getElementById('audienceScoreLabel').textContent = t('audienceScore') + ':';
+            document.getElementById('detailedCalculationsTitle').textContent = t('detailedCalculations');
+            document.getElementById('placeholderText').textContent = t('enterScores');
+            document.getElementById('copyright').textContent = t('copyright');
+
+            // Re-render judges to update their translations
+            renderJudges();
+            if (state.results) {
+                renderResults();
+            }
+        }
+
+        // Initialize app
+        function init() {
+            // Load saved preferences
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            const savedLanguage = localStorage.getItem('language') || 'en';
+            
+            state.theme = savedTheme;
+            state.language = savedLanguage;
+            
+            document.documentElement.className = state.theme;
+            document.documentElement.dir = state.language === 'ar' ? 'rtl' : 'ltr';
+            document.getElementById('themeToggle').textContent = state.theme === 'dark' ? '☀️' : '🌙';
+            document.getElementById('languageToggle').textContent = state.language === 'en' ? 'العربية' : 'English';
+
+            // Initialize judges
+            initializeJudges();
+            renderJudges();
+            updateTranslations();
+
+            // Event listeners
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+            document.getElementById('languageToggle').addEventListener('click', toggleLanguage);
+            document.getElementById('calculateBtn').addEventListener('click', calculateResults);
+            
+            document.getElementById('numJudges').addEventListener('change', function() {
+                state.numJudges = parseInt(this.value) || 1;
+                initializeJudges();
+                renderJudges();
+            });
+
+            document.getElementById('halfAudienceVoters').addEventListener('change', function() {
+                state.halfAudienceVoters = parseInt(this.value) || 0;
+            });
+
+            document.getElementById('halfAudiencePoints').addEventListener('change', function() {
+                state.halfAudiencePoints = parseFloat(this.value) || 0;
+            });
+
+            document.getElementById('fullAudienceVoters').addEventListener('change', function() {
+                state.fullAudienceVoters = parseInt(this.value) || 0;
+            });
+
+            document.getElementById('fullAudiencePoints').addEventListener('change', function() {
+                state.fullAudiencePoints = parseFloat(this.value) || 0;
+            });
+        }
+
+        // Start the app
+        init();
+    </script>
+</body>
 </html>
