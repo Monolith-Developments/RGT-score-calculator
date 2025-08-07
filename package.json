@@ -1,6 +1,5 @@
 {
   "name": "vite_react_shadcn_ts",
-  "homepage": "https://Monolith-Developments.github.io/RGT-score-calculator",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,9 +8,7 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
