@@ -395,6 +395,11 @@
     
 /* Mobile-specific tweaks */
 @media (max-width: 640px) {
+  .container {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+
   .text-3xl { font-size: 1.5rem; }
   .text-lg { font-size: 1rem; }
   .text-2xl { font-size: 1.25rem; }
@@ -404,11 +409,11 @@
   }
 
   .gap-4, .gap-6, .gap-8 {
-    gap: 1rem;
+    gap: 0.75rem;
   }
 
   .p-6, .p-8 {
-    padding: 1rem;
+    padding: 0.75rem !important;
   }
 
   .px-4, .py-4, .py-8 {
@@ -423,33 +428,75 @@
   .judge-impact-controls {
     flex-direction: column !important;
     gap: 0.5rem !important;
+    align-items: stretch !important;
   }
 
   .toggle {
     min-width: 100% !important;
     justify-content: center;
+    text-align: center;
   }
 
   /* Better spacing for mobile inputs */
   .mobile-input-group {
     gap: 0.5rem !important;
+    flex-direction: column !important;
+  }
+
+  .mobile-input-group .flex-1 {
+    width: 100% !important;
   }
 
   /* Fix header on mobile */
   .header-content {
+    text-align: center;
+    gap: 1rem !important;
+  }
+
+  .header-content .flex {
+    flex-direction: column;
+    align-items: center;
     text-align: center;
   }
 
   .header-controls {
     justify-content: center !important;
     margin-top: 1rem;
+    width: 100%;
   }
 
   /* Better button layout on mobile */
   .btn-kingdom {
     width: 100%;
-    max-width: 300px;
+    max-width: 280px;
     margin: 0 auto;
+    display: block;
+  }
+
+  /* Fix audience voting grid on mobile */
+  .grid.gap-4.md\:grid-cols-2 {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  /* Fix results grid on mobile */
+  .grid.gap-6.md\:grid-cols-2 {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+
+  /* Better card padding on mobile */
+  .card {
+    margin-bottom: 0.5rem;
+  }
+
+  /* Fix footer link styling on mobile */
+  .footer-link {
+    font-size: 0.875rem !important;
+    line-height: 1.4 !important;
+    padding: 0.5rem !important;
+    text-align: center !important;
+    display: block !important;
   }
 }
 
@@ -493,6 +540,28 @@
   z-index: 1000;
 }
 
+/* Footer link styling */
+.footer-link {
+  color: hsl(var(--primary));
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: calc(var(--radius) - 2px);
+  border: 1px solid hsl(var(--primary) / 0.3);
+  background-color: hsl(var(--primary) / 0.1);
+  transition: all 0.2s ease;
+  display: inline-block;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.footer-link:hover {
+  background-color: hsl(var(--primary) / 0.2);
+  border-color: hsl(var(--primary) / 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px hsl(var(--primary) / 0.2);
+}
+
 @media (max-width: 640px) {
   .back-btn {
     position: relative;
@@ -500,6 +569,16 @@
     left: auto;
     margin-bottom: 1rem;
     width: 100%;
+  }
+
+  .footer-link {
+    font-size: 0.875rem !important;
+    line-height: 1.4 !important;
+    padding: 0.75rem !important;
+    text-align: center !important;
+    display: block !important;
+    margin: 0 auto;
+    max-width: 300px;
   }
 }
 
@@ -510,18 +589,18 @@
     <div id="app" class="min-h-screen">
         <!-- Mathematical Explanation Page -->
         <div id="mathPage" class="math-page">
-            <button id="backToMain" class="btn btn-outline back-btn">← Back to Calculator</button>
+            <button id="backToMain" class="btn btn-outline back-btn" onclick="showMainApp()">← <span id="backToCalculator">Back to Calculator</span></button>
             <div class="container py-8">
                 <div class="card p-6">
-                    <h1 class="text-3xl font-bold gradient-text mb-6 text-center">Mathematical Methodology</h1>
+                    <h1 id="mathPageTitle" class="text-3xl font-bold gradient-text mb-6 text-center">Mathematical Methodology</h1>
                     
                     <div class="space-y-8">
                         <!-- Score Calculation -->
                         <section>
-                            <h2 class="text-2xl font-bold mb-4">Score Calculation Method</h2>
-                            <p class="mb-4">Our scoring system combines judges' evaluations with audience voting using a weighted average approach.</p>
+                            <h2 id="scoreCalcTitle" class="text-2xl font-bold mb-4">Score Calculation Method</h2>
+                            <p id="scoreCalcDesc" class="mb-4">Our scoring system combines judges' evaluations with audience voting using a weighted average approach.</p>
                             
-                            <h3 class="text-lg font-medium mb-3">Judge Score Calculation</h3>
+                            <h3 id="judgeScoreCalcTitle" class="text-lg font-medium mb-3">Judge Score Calculation</h3>
                             <div class="formula">
                                 Judge Base Score = (Creativity + Quality + Σ Special Criteria) / (2 + Number of Special Criteria)
                                 <br><br>
@@ -530,12 +609,12 @@
                                 where Impact Factor = 1.0 (Full Impact) or 0.5 (Half Impact)
                             </div>
                             
-                            <h3 class="text-lg font-medium mb-3">Overall Judges Average</h3>
+                            <h3 id="overallJudgesTitle" class="text-lg font-medium mb-3">Overall Judges Average</h3>
                             <div class="formula">
                                 Overall Judges Average = Σ(Judge Final Scores) / Number of Judges
                             </div>
                             
-                            <h3 class="text-lg font-medium mb-3">Audience Score Calculation</h3>
+                            <h3 id="audienceScoreCalcTitle" class="text-lg font-medium mb-3">Audience Score Calculation</h3>
                             <div class="formula">
                                 Half Impact Audience = (Total Half Points / Half Voters) × 0.5
                                 <br><br>
@@ -544,7 +623,7 @@
                                 Total Audience Score = Half Impact Audience + Full Impact Audience
                             </div>
                             
-                            <h3 class="text-lg font-medium mb-3">Final Score</h3>
+                            <h3 id="finalScoreTitle" class="text-lg font-medium mb-3">Final Score</h3>
                             <div class="formula">
                                 Final Score = min(Overall Judges Average + Total Audience Score, 10.0)
                             </div>
@@ -552,11 +631,11 @@
 
                         <!-- Fairness Analysis -->
                         <section>
-                            <h2 class="text-2xl font-bold mb-4">Fairness Analysis System</h2>
-                            <p class="mb-4">Our fairness analysis evaluates whether each judge's rating is statistically reasonable compared to their peers using standard deviation analysis.</p>
+                            <h2 id="fairnessAnalysisTitle" class="text-2xl font-bold mb-4">Fairness Analysis System</h2>
+                            <p id="fairnessAnalysisDesc" class="mb-4">Our fairness analysis evaluates whether each judge's rating is statistically reasonable compared to their peers using standard deviation analysis.</p>
                             
-                            <h3 class="text-lg font-medium mb-3">Statistical Method</h3>
-                            <p class="mb-4">For each individual score from a judge, we:</p>
+                            <h3 id="statisticalMethodTitle" class="text-lg font-medium mb-3">Statistical Method</h3>
+                            <p id="statisticalMethodDesc" class="mb-4">For each individual score from a judge, we:</p>
                             <ol class="list-decimal list-inside mb-4 space-y-2">
                                 <li>Exclude the current judge's score from analysis</li>
                                 <li>Calculate the mean (μ) and standard deviation (σ) of remaining scores</li>
@@ -746,9 +825,9 @@
         <!-- Footer -->
         <footer class="border-t p-6">
             <div class="container text-center">
-                <p class="text-sm mb-2">
-                    <a href="#" id="mathLink" class="text-primary hover:opacity-80 transition-colors">
-                        View detailed mathematical calculations and fairness methodology
+                <p class="text-sm mb-3">
+                    <a href="#" id="mathLink" class="footer-link">
+                        <span id="mathLinkText">View detailed mathematical calculations and fairness methodology</span>
                     </a>
                 </p>
                 <p id="copyright" class="text-sm opacity-60">© 2025 Rustic Kingdom 🗝️ | Developer: Adham</p>
@@ -807,7 +886,20 @@
                 calculationNote2: '• Audience Score = Audience Average × Impact',
                 calculationNote3: '• Final Score = Judges\' Score + Audience Score',
                 enterScores: 'Enter scores and click "Calculate Result" to see the final score and breakdown.',
-                copyright: '© 2025 Rustic Kingdom 🗝️ | Developer: Adham'
+                copyright: '© 2025 Rustic Kingdom 🗝️ | Developer: Adham',
+                mathLinkText: 'View detailed mathematical calculations and fairness methodology',
+                backToCalculator: 'Back to Calculator',
+                mathPageTitle: 'Mathematical Methodology',
+                scoreCalcTitle: 'Score Calculation Method',
+                scoreCalcDesc: 'Our scoring system combines judges\' evaluations with audience voting using a weighted average approach.',
+                judgeScoreCalcTitle: 'Judge Score Calculation',
+                overallJudgesTitle: 'Overall Judges Average',
+                audienceScoreCalcTitle: 'Audience Score Calculation',
+                finalScoreTitle: 'Final Score',
+                fairnessAnalysisTitle: 'Fairness Analysis System',
+                fairnessAnalysisDesc: 'Our fairness analysis evaluates whether each judge\'s rating is statistically reasonable compared to their peers using standard deviation analysis.',
+                statisticalMethodTitle: 'Statistical Method',
+                statisticalMethodDesc: 'For each individual score from a judge, we:'
             },
             ar: {
                 title: 'حاسبة مواهب راستيك',
@@ -843,7 +935,20 @@
                 calculationNote2: '• نقاط الجمهور = متوسط الجمهور × التأثير',
                 calculationNote3: '• النتيجة النهائية = نقاط الحكام + نقاط الجمهور',
                 enterScores: 'أدخل النقاط واضغط "احسب النتيجة" لرؤية النتيجة النهائية والتفصيل.',
-                copyright: '© 2025 مملكة ريستيك 🗝️ | المطور: أدهم'
+                copyright: '© 2025 مملكة ريستيك 🗝️ | المطور: أدهم',
+                mathLinkText: 'عرض الحسابات الرياضية التفصيلية ومنهجية العدالة',
+                backToCalculator: 'العودة إلى الحاسبة',
+                mathPageTitle: 'المنهجية الرياضية',
+                scoreCalcTitle: 'طريقة حساب النقاط',
+                scoreCalcDesc: 'نظام التقييم لدينا يجمع بين تقييمات الحكام وتصويت الجمهور باستخدام متوسط مرجح.',
+                judgeScoreCalcTitle: 'حساب نقاط الحكم',
+                overallJudgesTitle: 'متوسط الحكام الإجمالي',
+                audienceScoreCalcTitle: 'حساب نقاط الجمهور',
+                finalScoreTitle: 'النتيجة النهائية',
+                fairnessAnalysisTitle: 'نظام تحليل العدالة',
+                fairnessAnalysisDesc: 'تحليل العدالة لدينا يقيم ما إذا كان تقييم كل حكم معقولاً إحصائياً مقارنة بأقرانهم باستخدام تحليل الانحراف المعياري.',
+                statisticalMethodTitle: 'الطريقة الإحصائية',
+                statisticalMethodDesc: 'لكل نقطة فردية من حكم، نحن:'
             }
         };
 
@@ -1116,6 +1221,21 @@
             document.getElementById('detailedCalculationsTitle').textContent = t('detailedCalculations');
             document.getElementById('placeholderText').textContent = t('enterScores');
             document.getElementById('copyright').textContent = t('copyright');
+            document.getElementById('mathLinkText').textContent = t('mathLinkText');
+            
+            // Update math page translations
+            document.getElementById('backToCalculator').textContent = t('backToCalculator');
+            document.getElementById('mathPageTitle').textContent = t('mathPageTitle');
+            document.getElementById('scoreCalcTitle').textContent = t('scoreCalcTitle');
+            document.getElementById('scoreCalcDesc').textContent = t('scoreCalcDesc');
+            document.getElementById('judgeScoreCalcTitle').textContent = t('judgeScoreCalcTitle');
+            document.getElementById('overallJudgesTitle').textContent = t('overallJudgesTitle');
+            document.getElementById('audienceScoreCalcTitle').textContent = t('audienceScoreCalcTitle');
+            document.getElementById('finalScoreTitle').textContent = t('finalScoreTitle');
+            document.getElementById('fairnessAnalysisTitle').textContent = t('fairnessAnalysisTitle');
+            document.getElementById('fairnessAnalysisDesc').textContent = t('fairnessAnalysisDesc');
+            document.getElementById('statisticalMethodTitle').textContent = t('statisticalMethodTitle');
+            document.getElementById('statisticalMethodDesc').textContent = t('statisticalMethodDesc');
 
             // Re-render judges to update their translations
             renderJudges();
