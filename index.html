@@ -418,6 +418,89 @@
   .grid-cols-2, .md\:grid-cols-2, .lg\:grid-cols-3 {
     grid-template-columns: 1fr !important;
   }
+
+  /* Better mobile layout for judge cards */
+  .judge-impact-controls {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+
+  .toggle {
+    min-width: 100% !important;
+    justify-content: center;
+  }
+
+  /* Better spacing for mobile inputs */
+  .mobile-input-group {
+    gap: 0.5rem !important;
+  }
+
+  /* Fix header on mobile */
+  .header-content {
+    text-align: center;
+  }
+
+  .header-controls {
+    justify-content: center !important;
+    margin-top: 1rem;
+  }
+
+  /* Better button layout on mobile */
+  .btn-kingdom {
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+}
+
+/* Fairness indicator styles */
+.fairness-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.fairness-fair { background-color: #22c55e; }
+.fairness-questionable { background-color: #eab308; }
+.fairness-unfair { background-color: #ef4444; }
+
+/* Math explanation page styles */
+.math-page {
+  display: none;
+}
+
+.math-page.active {
+  display: block;
+}
+
+.formula {
+  background-color: hsl(var(--muted));
+  padding: 1rem;
+  border-radius: calc(var(--radius) - 2px);
+  border-left: 4px solid hsl(var(--primary));
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  margin: 1rem 0;
+}
+
+.back-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+}
+
+@media (max-width: 640px) {
+  .back-btn {
+    position: relative;
+    top: auto;
+    left: auto;
+    margin-bottom: 1rem;
+    width: 100%;
+  }
 }
 
 </style>
@@ -425,25 +508,140 @@
 
 <body>
     <div id="app" class="min-h-screen">
-        <!-- Header -->
-        <header class="p-6 border-b">
-            <div class="container">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div class="flex items-center gap-4">
-                        <img src="public/lovable-uploads/4acaf5e0-c6b0-41dd-a269-56b867d21aab.png" alt="Rustic Kingdom Logo" class="logo">
-                        <div>
-                            <h1 id="title" class="text-3xl font-bold gradient-text">Rustic Got Talent Calculator</h1>
-                            <p id="subtitle" class="text-lg opacity-60">Calculate contestant scores based on judges' ratings and audience votes</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button id="themeToggle" class="btn btn-outline">🌙</button>
-                        <button id="languageToggle" class="btn btn-outline">العربية</button>
+        <!-- Mathematical Explanation Page -->
+        <div id="mathPage" class="math-page">
+            <button id="backToMain" class="btn btn-outline back-btn">← Back to Calculator</button>
+            <div class="container py-8">
+                <div class="card p-6">
+                    <h1 class="text-3xl font-bold gradient-text mb-6 text-center">Mathematical Methodology</h1>
+                    
+                    <div class="space-y-8">
+                        <!-- Score Calculation -->
+                        <section>
+                            <h2 class="text-2xl font-bold mb-4">Score Calculation Method</h2>
+                            <p class="mb-4">Our scoring system combines judges' evaluations with audience voting using a weighted average approach.</p>
+                            
+                            <h3 class="text-lg font-medium mb-3">Judge Score Calculation</h3>
+                            <div class="formula">
+                                Judge Base Score = (Creativity + Quality + Σ Special Criteria) / (2 + Number of Special Criteria)
+                                <br><br>
+                                Judge Final Score = Judge Base Score × Impact Factor
+                                <br>
+                                where Impact Factor = 1.0 (Full Impact) or 0.5 (Half Impact)
+                            </div>
+                            
+                            <h3 class="text-lg font-medium mb-3">Overall Judges Average</h3>
+                            <div class="formula">
+                                Overall Judges Average = Σ(Judge Final Scores) / Number of Judges
+                            </div>
+                            
+                            <h3 class="text-lg font-medium mb-3">Audience Score Calculation</h3>
+                            <div class="formula">
+                                Half Impact Audience = (Total Half Points / Half Voters) × 0.5
+                                <br><br>
+                                Full Impact Audience = Total Full Points / Full Voters
+                                <br><br>
+                                Total Audience Score = Half Impact Audience + Full Impact Audience
+                            </div>
+                            
+                            <h3 class="text-lg font-medium mb-3">Final Score</h3>
+                            <div class="formula">
+                                Final Score = min(Overall Judges Average + Total Audience Score, 10.0)
+                            </div>
+                        </section>
+
+                        <!-- Fairness Analysis -->
+                        <section>
+                            <h2 class="text-2xl font-bold mb-4">Fairness Analysis System</h2>
+                            <p class="mb-4">Our fairness analysis evaluates whether each judge's rating is statistically reasonable compared to their peers using standard deviation analysis.</p>
+                            
+                            <h3 class="text-lg font-medium mb-3">Statistical Method</h3>
+                            <p class="mb-4">For each individual score from a judge, we:</p>
+                            <ol class="list-decimal list-inside mb-4 space-y-2">
+                                <li>Exclude the current judge's score from analysis</li>
+                                <li>Calculate the mean (μ) and standard deviation (σ) of remaining scores</li>
+                                <li>Compare the judge's score against statistical intervals</li>
+                            </ol>
+                            
+                            <h3 class="text-lg font-medium mb-3">Mathematical Formulas</h3>
+                            <div class="formula">
+                                Let S = Current judge's score
+                                <br>
+                                Let X = Array of all other judges' scores
+                                <br>
+                                Let n = Number of other judges
+                                <br><br>
+                                Mean (μ) = Σ(Xi) / n
+                                <br><br>
+                                Standard Deviation (σ) = √[Σ(Xi - μ)² / n]
+                            </div>
+                            
+                            <h3 class="text-lg font-medium mb-3">Fairness Classification</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-center gap-3">
+                                    <span class="fairness-dot fairness-fair"></span>
+                                    <strong>Fair (Green):</strong>
+                                    <span>S ∈ [μ - 1.0σ, μ + 1.0σ]</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="fairness-dot fairness-questionable"></span>
+                                    <strong>Questionable (Yellow):</strong>
+                                    <span>S ∈ [μ ± 1.0σ, μ ± 1.5σ] but not in green range</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="fairness-dot fairness-unfair"></span>
+                                    <strong>Unfair (Red):</strong>
+                                    <span>S < (μ - 1.5σ) or S > (μ + 1.5σ)</span>
+                                </div>
+                            </div>
+                            
+                            <h3 class="text-lg font-medium mb-3 mt-6">Interpretation</h3>
+                            <ul class="list-disc list-inside space-y-2">
+                                <li><strong>Green dots</strong> indicate the judge's score aligns well with peer consensus</li>
+                                <li><strong>Yellow dots</strong> suggest the score is somewhat outside normal range but acceptable</li>
+                                <li><strong>Red dots</strong> indicate potential bias, error, or significant disagreement with peers</li>
+                            </ul>
+                        </section>
+
+                        <!-- Technical Implementation -->
+                        <section>
+                            <h2 class="text-2xl font-bold mb-4">Technical Implementation</h2>
+                            <p class="mb-4">The fairness analysis updates dynamically as scores change, providing real-time feedback on judge consistency.</p>
+                            
+                            <h3 class="text-lg font-medium mb-3">Real-time Analysis</h3>
+                            <ul class="list-disc list-inside space-y-2">
+                                <li>Fairness indicators recalculate instantly when any score is modified</li>
+                                <li>Analysis requires at least 3 judges for meaningful statistical comparison</li>
+                                <li>Each scoring category (Creativity, Quality, Special Criteria) is analyzed independently</li>
+                                <li>Visual feedback helps identify potential scoring inconsistencies immediately</li>
+                            </ul>
+                        </section>
                     </div>
                 </div>
-                <p id="corpsMessage" class="text-center mt-4 text-sm opacity-60">With regards of COT</p>
             </div>
-        </header>
+        </div>
+
+        <!-- Main Application -->
+        <div id="mainApp">
+            <!-- Header -->
+            <header class="p-6 border-b">
+                <div class="container">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 header-content">
+                        <div class="flex items-center gap-4">
+                            <img src="public/lovable-uploads/4acaf5e0-c6b0-41dd-a269-56b867d21aab.png" alt="Rustic Kingdom Logo" class="logo">
+                            <div>
+                                <h1 id="title" class="text-3xl font-bold gradient-text">Rustic Got Talent Calculator</h1>
+                                <p id="subtitle" class="text-lg opacity-60">Calculate contestant scores based on judges' ratings and audience votes</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 header-controls">
+                            <button id="themeToggle" class="btn btn-outline">🌙</button>
+                            <button id="languageToggle" class="btn btn-outline">العربية</button>
+                        </div>
+                    </div>
+                    <p id="corpsMessage" class="text-center mt-4 text-sm opacity-60">With regards of COT</p>
+                </div>
+            </header>
 
         <!-- Main Content -->
         <main class="container py-8">
@@ -548,9 +746,15 @@
         <!-- Footer -->
         <footer class="border-t p-6">
             <div class="container text-center">
+                <p class="text-sm mb-2">
+                    <a href="#" id="mathLink" class="text-primary hover:opacity-80 transition-colors">
+                        View detailed mathematical calculations and fairness methodology
+                    </a>
+                </p>
                 <p id="copyright" class="text-sm opacity-60">© 2025 Rustic Kingdom 🗝️ | Developer: Adham</p>
             </div>
         </footer>
+        </div>
     </div>
 
     <script>
@@ -659,7 +863,47 @@
             }));
         }
 
-        // Render judges
+        // Calculate fairness indicator for a score
+        function calculateFairness(judgeIndex, scoreType, currentScore) {
+            if (state.numJudges < 3) return 'fair'; // Need at least 3 judges for meaningful analysis
+            
+            // Get all scores from other judges for this score type
+            const otherScores = state.judges
+                .filter((_, index) => index !== judgeIndex)
+                .map(judge => {
+                    if (scoreType === 'creativity') return judge.creativity;
+                    if (scoreType === 'quality') return judge.quality;
+                    if (scoreType.startsWith('criteria_')) {
+                        const criteriaIndex = parseInt(scoreType.split('_')[1]);
+                        return judge.specialCriteria[criteriaIndex] || 0;
+                    }
+                    return 0;
+                })
+                .filter(score => score > 0); // Only consider non-zero scores
+            
+            if (otherScores.length < 2) return 'fair'; // Need at least 2 other scores
+            
+            // Calculate mean and standard deviation
+            const mean = otherScores.reduce((sum, score) => sum + score, 0) / otherScores.length;
+            const variance = otherScores.reduce((sum, score) => sum + Math.pow(score - mean, 2), 0) / otherScores.length;
+            const stdDev = Math.sqrt(variance);
+            
+            // Avoid division by zero
+            if (stdDev === 0) return 'fair';
+            
+            const score = parseFloat(currentScore) || 0;
+            
+            // Calculate fairness based on standard deviation ranges
+            if (score >= mean - stdDev && score <= mean + stdDev) {
+                return 'fair'; // Green: within 1 standard deviation
+            } else if (score >= mean - 1.5 * stdDev && score <= mean + 1.5 * stdDev) {
+                return 'questionable'; // Yellow: within 1.5 standard deviations
+            } else {
+                return 'unfair'; // Red: outside 1.5 standard deviations
+            }
+        }
+
+        // Render judges with mobile-responsive layout and fairness indicators
         function renderJudges() {
             const container = document.getElementById('judgesContainer');
             container.innerHTML = '';
@@ -667,49 +911,72 @@
             state.judges.forEach((judge, index) => {
                 const judgeCard = document.createElement('div');
                 judgeCard.className = 'card p-4';
+                
+                // Calculate fairness indicators
+                const creativityFairness = calculateFairness(index, 'creativity', judge.creativity);
+                const qualityFairness = calculateFairness(index, 'quality', judge.quality);
+                
                 judgeCard.innerHTML = `
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="font-medium">${t('judge')} ${judge.id}</h3>
-                        <div class="flex items-center gap-2">
+                    <div class="flex flex-col gap-4 mb-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-medium">${t('judge')} ${judge.id}</h3>
+                        </div>
+                        <div class="judge-impact-controls flex items-center gap-2">
                             <span class="text-sm">${t('impactToggle')}:</span>
-                            <button class="toggle ${judge.halfWeight ? '' : 'active'}" 
-                                    onclick="toggleJudgeWeight(${index}, false)">
-                                ${t('fullImpact')}
-                            </button>
-                            <button class="toggle ${judge.halfWeight ? 'active' : ''}" 
-                                    onclick="toggleJudgeWeight(${index}, true)">
-                                ${t('halfImpact')}
-                            </button>
+                            <div class="flex gap-2 w-full">
+                                <button class="toggle ${judge.halfWeight ? '' : 'active'}" 
+                                        onclick="toggleJudgeWeight(${index}, false)">
+                                    ${t('fullImpact')}
+                                </button>
+                                <button class="toggle ${judge.halfWeight ? 'active' : ''}" 
+                                        onclick="toggleJudgeWeight(${index}, true)">
+                                    ${t('halfImpact')}
+                                </button>
+                            </div>
                         </div>
                     </div>
                     
                     <div class="space-y-4">
                         <div>
-                            <label class="label mb-2 block">${t('creativity')}</label>
+                            <label class="label mb-2 block">
+                                ${t('creativity')}
+                                <span class="fairness-dot fairness-${creativityFairness}"></span>
+                            </label>
                             <input type="number" class="input" min="0" max="10" step="0.1" 
                                    value="${judge.creativity}" 
-                                   onchange="updateJudgeField(${index}, 'creativity', this.value)">
+                                   onchange="updateJudgeField(${index}, 'creativity', this.value); renderJudges();">
                         </div>
                         
                         <div>
-                            <label class="label mb-2 block">${t('quality')}</label>
+                            <label class="label mb-2 block">
+                                ${t('quality')}
+                                <span class="fairness-dot fairness-${qualityFairness}"></span>
+                            </label>
                             <input type="number" class="input" min="0" max="10" step="0.1" 
                                    value="${judge.quality}" 
-                                   onchange="updateJudgeField(${index}, 'quality', this.value)">
+                                   onchange="updateJudgeField(${index}, 'quality', this.value); renderJudges();">
                         </div>
                         
                         <div>
                             <label class="label mb-2 block">${t('specialCriteria')}</label>
                             <div id="specialCriteria_${index}" class="space-y-2">
-                                ${judge.specialCriteria.map((criteria, cIndex) => `
-                                    <div class="flex gap-2">
-                                        <input type="number" class="input flex-1" min="0" max="10" step="0.1" 
-                                               value="${criteria}" 
-                                               onchange="updateSpecialCriteria(${index}, ${cIndex}, this.value)"
-                                               placeholder="${t('criteria')} ${cIndex + 1}">
+                                ${judge.specialCriteria.map((criteria, cIndex) => {
+                                    const criteriaFairness = calculateFairness(index, `criteria_${cIndex}`, criteria);
+                                    return `
+                                    <div class="flex gap-2 mobile-input-group">
+                                        <div class="flex-1">
+                                            <div class="flex items-center gap-2 mb-1">
+                                                <span class="text-sm">${t('criteria')} ${cIndex + 1}</span>
+                                                <span class="fairness-dot fairness-${criteriaFairness}"></span>
+                                            </div>
+                                            <input type="number" class="input" min="0" max="10" step="0.1" 
+                                                   value="${criteria}" 
+                                                   onchange="updateSpecialCriteria(${index}, ${cIndex}, this.value); renderJudges();"
+                                                   placeholder="${t('criteria')} ${cIndex + 1}">
+                                        </div>
                                         <button class="btn btn-destructive" onclick="removeSpecialCriteria(${index}, ${cIndex})">×</button>
                                     </div>
-                                `).join('')}
+                                `;}).join('')}
                             </div>
                             <button class="btn btn-outline mt-2 w-full" onclick="addSpecialCriteria(${index})">
                                 + ${t('criteria')}
@@ -857,6 +1124,17 @@
             }
         }
 
+        // Navigation functions
+        function showMathPage() {
+            document.getElementById('mainApp').style.display = 'none';
+            document.getElementById('mathPage').classList.add('active');
+        }
+
+        function showMainApp() {
+            document.getElementById('mathPage').classList.remove('active');
+            document.getElementById('mainApp').style.display = 'block';
+        }
+
         // Initialize app
         function init() {
             // Load saved preferences
@@ -880,6 +1158,11 @@
             document.getElementById('themeToggle').addEventListener('click', toggleTheme);
             document.getElementById('languageToggle').addEventListener('click', toggleLanguage);
             document.getElementById('calculateBtn').addEventListener('click', calculateResults);
+            document.getElementById('mathLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                showMathPage();
+            });
+            document.getElementById('backToMain').addEventListener('click', showMainApp);
             
             document.getElementById('numJudges').addEventListener('change', function() {
                 state.numJudges = parseInt(this.value) || 1;
