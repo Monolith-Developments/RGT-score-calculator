@@ -396,64 +396,50 @@
 /* Mobile-specific tweaks */
 @media (max-width: 640px) {
   .container {
-    padding-left: 0.75rem !important;
-    padding-right: 0.75rem !important;
-    max-width: 100% !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
   }
 
-  .text-3xl { font-size: 1.5rem !important; line-height: 1.6 !important; }
-  .text-lg { font-size: 1rem !important; line-height: 1.5 !important; }
-  .text-2xl { font-size: 1.25rem !important; line-height: 1.5 !important; }
+  .text-3xl { font-size: 1.5rem; }
+  .text-lg { font-size: 1rem; }
+  .text-2xl { font-size: 1.25rem; }
 
-  /* Force single column layouts */
-  .grid-cols-2, .grid-cols-3,
-  .md\:grid-cols-2, .md\:grid-cols-3,
-  .lg\:grid-cols-3 {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Force column direction for flex layouts */
   .flex-col, .md\:flex-row {
     flex-direction: column !important;
   }
 
-  /* Consistent mobile spacing */
   .gap-4, .gap-6, .gap-8 {
-    gap: 1rem !important;
+    gap: 0.75rem;
   }
 
   .p-6, .p-8 {
-    padding: 1rem !important;
+    padding: 0.75rem !important;
   }
 
   .px-4, .py-4, .py-8 {
-    padding: 1rem !important;
+    padding: 0.75rem;
   }
 
-  /* Logo and header improvements */
-  .logo {
-    width: 2.5rem !important;
-    height: 2.5rem !important;
+  .grid-cols-2, .md\:grid-cols-2, .lg\:grid-cols-3 {
+    grid-template-columns: 1fr !important;
   }
 
-  /* Judge cards mobile layout */
+  /* Better mobile layout for judge cards */
   .judge-impact-controls {
     flex-direction: column !important;
-    gap: 0.75rem !important;
+    gap: 0.5rem !important;
     align-items: stretch !important;
   }
 
   .toggle {
-    width: 100% !important;
-    min-width: auto !important;
-    justify-content: center !important;
-    text-align: center !important;
-    padding: 0.75rem 1rem !important;
+    min-width: 100% !important;
+    justify-content: center;
+    text-align: center;
   }
 
   /* Better spacing for mobile inputs */
   .mobile-input-group {
-    gap: 0.75rem !important;
+    gap: 0.5rem !important;
     flex-direction: column !important;
   }
 
@@ -463,100 +449,70 @@
 
   /* Fix header on mobile */
   .header-content {
-    text-align: center !important;
+    text-align: center;
     gap: 1rem !important;
   }
 
   .header-content .flex {
-    flex-direction: column !important;
-    align-items: center !important;
-    text-align: center !important;
-    gap: 1rem !important;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
 
   .header-controls {
     justify-content: center !important;
-    margin-top: 0 !important;
-    width: 100% !important;
+    margin-top: 1rem;
+    width: 100%;
   }
 
   /* Better button layout on mobile */
   .btn-kingdom {
-    width: 100% !important;
-    max-width: 320px !important;
-    margin: 0 auto !important;
-    display: block !important;
-    padding: 1rem 2rem !important;
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
+    display: block;
   }
 
-  /* Fix input styling on mobile */
-  .input {
-    padding: 0.75rem !important;
-    font-size: 1rem !important;
+  /* Fix audience voting grid on mobile */
+  .grid.gap-4.md\:grid-cols-2 {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
   }
 
-  /* Better card spacing on mobile */
+  /* Fix results grid on mobile */
+  .grid.gap-6.md\:grid-cols-2 {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+
+  /* Better card padding on mobile */
   .card {
-    margin-bottom: 1rem !important;
-    padding: 1rem !important;
+    margin-bottom: 0.5rem;
   }
 
   /* Fix footer link styling on mobile */
   .footer-link {
     font-size: 0.875rem !important;
     line-height: 1.4 !important;
-    padding: 0.75rem 1rem !important;
+    padding: 0.5rem !important;
     text-align: center !important;
     display: block !important;
-    margin: 0 auto !important;
-    max-width: 320px !important;
-  }
-
-  /* Judge name input styling */
-  .judge-name-input {
-    font-size: 1rem !important;
-    padding: 0.5rem !important;
-    margin-bottom: 0.75rem !important;
-  }
-
-  /* Fairness dot positioning */
-  .judge-fairness-indicator {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 0.5rem !important;
-    margin: 0.5rem 0 !important;
   }
 }
 
 /* Fairness indicator styles */
 .fairness-dot {
   display: inline-block;
-  width: 16px;
-  height: 16px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
-  margin: 0 0.5rem;
+  margin-left: 8px;
   vertical-align: middle;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .fairness-fair { background-color: #22c55e; }
 .fairness-questionable { background-color: #eab308; }
 .fairness-unfair { background-color: #ef4444; }
-
-.judge-fairness-indicator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  margin: 0.5rem 0;
-  padding: 0.5rem;
-  background: hsl(var(--muted) / 0.3);
-  border-radius: calc(var(--radius) - 2px);
-  font-size: 0.875rem;
-  font-weight: 500;
-}
 
 /* Math explanation page styles */
 .math-page {
@@ -681,12 +637,12 @@
                             <h3 id="statisticalMethodTitle" class="text-lg font-medium mb-3">Statistical Method</h3>
                             <p id="statisticalMethodDesc" class="mb-4">For each individual score from a judge, we:</p>
                             <ol class="list-decimal list-inside mb-4 space-y-2">
-                                <li id="excludeCurrentJudge">Exclude the current judge's score from analysis</li>
-                                <li id="calculateMeanStd">Calculate the mean (μ) and standard deviation (σ) of remaining scores</li>
-                                <li id="compareScore">Compare the judge's score against statistical intervals</li>
+                                <li>Exclude the current judge's score from analysis</li>
+                                <li>Calculate the mean (μ) and standard deviation (σ) of remaining scores</li>
+                                <li>Compare the judge's score against statistical intervals</li>
                             </ol>
                             
-                            <h3 id="mathFormulasTitle" class="text-lg font-medium mb-3">Mathematical Formulas</h3>
+                            <h3 class="text-lg font-medium mb-3">Mathematical Formulas</h3>
                             <div class="formula">
                                 Let S = Current judge's score
                                 <br>
@@ -699,7 +655,7 @@
                                 Standard Deviation (σ) = √[Σ(Xi - μ)² / n]
                             </div>
                             
-                            <h3 id="fairnessClassificationTitle" class="text-lg font-medium mb-3">Fairness Classification</h3>
+                            <h3 class="text-lg font-medium mb-3">Fairness Classification</h3>
                             <div class="space-y-3">
                                 <div class="flex items-center gap-3">
                                     <span class="fairness-dot fairness-fair"></span>
@@ -718,25 +674,25 @@
                                 </div>
                             </div>
                             
-                            <h3 id="fairInterpretationTitle" class="text-lg font-medium mb-3 mt-6">Interpretation</h3>
+                            <h3 class="text-lg font-medium mb-3 mt-6">Interpretation</h3>
                             <ul class="list-disc list-inside space-y-2">
-                                <li id="greenDotMeaning"><strong>Green dots</strong> indicate the judge's score aligns well with peer consensus</li>
-                                <li id="yellowDotMeaning"><strong>Yellow dots</strong> suggest the score is somewhat outside normal range but acceptable</li>
-                                <li id="redDotMeaning"><strong>Red dots</strong> indicate potential bias, error, or significant disagreement with peers</li>
+                                <li><strong>Green dots</strong> indicate the judge's score aligns well with peer consensus</li>
+                                <li><strong>Yellow dots</strong> suggest the score is somewhat outside normal range but acceptable</li>
+                                <li><strong>Red dots</strong> indicate potential bias, error, or significant disagreement with peers</li>
                             </ul>
                         </section>
 
                         <!-- Technical Implementation -->
                         <section>
-                            <h2 id="technicalImplementationTitle" class="text-2xl font-bold mb-4">Technical Implementation</h2>
-                            <p id="technicalImplementationDesc" class="mb-4">The fairness analysis updates dynamically as scores change, providing real-time feedback on judge consistency.</p>
+                            <h2 class="text-2xl font-bold mb-4">Technical Implementation</h2>
+                            <p class="mb-4">The fairness analysis updates dynamically as scores change, providing real-time feedback on judge consistency.</p>
                             
-                            <h3 id="realTimeAnalysisTitle" class="text-lg font-medium mb-3">Real-time Analysis</h3>
+                            <h3 class="text-lg font-medium mb-3">Real-time Analysis</h3>
                             <ul class="list-disc list-inside space-y-2">
-                                <li id="fairnessRecalc">Fairness indicators recalculate instantly when any score is modified</li>
-                                <li id="requiresThreeJudges">Analysis requires at least 3 judges for meaningful statistical comparison</li>
-                                <li id="analyzeIndependently">Each scoring category (Creativity, Quality, Special Criteria) is analyzed independently</li>
-                                <li id="visualFeedback">Visual feedback helps identify potential scoring inconsistencies immediately</li>
+                                <li>Fairness indicators recalculate instantly when any score is modified</li>
+                                <li>Analysis requires at least 3 judges for meaningful statistical comparison</li>
+                                <li>Each scoring category (Creativity, Quality, Special Criteria) is analyzed independently</li>
+                                <li>Visual feedback helps identify potential scoring inconsistencies immediately</li>
                             </ul>
                         </section>
                     </div>
@@ -751,7 +707,7 @@
                 <div class="container">
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 header-content">
                         <div class="flex items-center gap-4">
-                            <img src="src/assets/logo.png" alt="Rustic Kingdom Logo" class="logo">
+                            <img src="public/lovable-uploads/4acaf5e0-c6b0-41dd-a269-56b867d21aab.png" alt="Rustic Kingdom Logo" class="logo">
                             <div>
                                 <h1 id="title" class="text-3xl font-bold gradient-text">Rustic Got Talent Calculator</h1>
                                 <p id="subtitle" class="text-lg opacity-60">Calculate contestant scores based on judges' ratings and audience votes</p>
@@ -940,27 +896,10 @@
                 overallJudgesTitle: 'Overall Judges Average',
                 audienceScoreCalcTitle: 'Audience Score Calculation',
                 finalScoreTitle: 'Final Score',
-                fairnessAnalysisTitle: 'نظام تحليل العدالة',
-                fairnessAnalysisDesc: 'تحليل العدالة لدينا يقيم ما إذا كان تقييم كل حكم معقولاً إحصائياً مقارنة بأقرانهم باستخدام تحليل الانحراف المعياري.',
-                statisticalMethodTitle: 'الطريقة الإحصائية',
-                statisticalMethodDesc: 'لكل نقطة فردية من حكم، نحن:',
-                fairnessClassificationTitle: 'تصنيف العدالة',
-                fairInterpretationTitle: 'التفسير',
-                technicalImplementationTitle: 'التنفيذ التقني',
-                technicalImplementationDesc: 'يتم تحديث تحليل العدالة ديناميكياً عند تغيير النقاط، مما يوفر ملاحظات فورية على اتساق الحكام.',
-                realTimeAnalysisTitle: 'التحليل الفوري',
-                excludeCurrentJudge: 'استبعاد نقطة الحكم الحالي من التحليل',
-                calculateMeanStd: 'حساب المتوسط (μ) والانحراف المعياري (σ) للنقاط المتبقية',
-                compareScore: 'مقارنة نقطة الحكم بالفترات الإحصائية',
-                mathFormulasTitle: 'الصيغ الرياضية',
-                greenDotMeaning: 'النقاط الخضراء تشير إلى أن نقطة الحكم تتماشى جيداً مع إجماع الأقران',
-                yellowDotMeaning: 'النقاط الصفراء تشير إلى أن النقطة خارج المدى الطبيعي إلى حد ما ولكنها مقبولة',
-                redDotMeaning: 'النقاط الحمراء تشير إلى تحيز محتمل أو خطأ أو خلاف كبير مع الأقران',
-                fairnessRecalc: 'تُعيد مؤشرات العدالة الحساب فوراً عند تعديل أي نقطة',
-                requiresThreeJudges: 'يتطلب التحليل ما لا يقل عن 3 حكام للمقارنة الإحصائية الهادفة',
-                analyzeIndependently: 'يتم تحليل كل فئة تقييم (الإبداع، الجودة، المعايير الخاصة) بشكل مستقل',
-                visualFeedback: 'الملاحظات البصرية تساعد في تحديد التناقضات المحتملة في التقييم فوراً',
-                editJudgeName: 'تحرير اسم الحكم'
+                fairnessAnalysisTitle: 'Fairness Analysis System',
+                fairnessAnalysisDesc: 'Our fairness analysis evaluates whether each judge\'s rating is statistically reasonable compared to their peers using standard deviation analysis.',
+                statisticalMethodTitle: 'Statistical Method',
+                statisticalMethodDesc: 'For each individual score from a judge, we:'
             },
             ar: {
                 title: 'حاسبة مواهب راستيك',
@@ -1022,7 +961,6 @@
         function initializeJudges() {
             state.judges = Array.from({ length: state.numJudges }, (_, i) => ({
                 id: i + 1,
-                name: t('judge') + ' ' + (i + 1),
                 creativity: 0,
                 quality: 0,
                 specialCriteria: [],
@@ -1030,57 +968,8 @@
             }));
         }
 
-        // Calculate overall fairness for a judge based on all their scores
-        function calculateJudgeFairness(judgeIndex) {
-            if (state.numJudges < 3) return 'fair'; // Need at least 3 judges for meaningful analysis
-            
-            const judge = state.judges[judgeIndex];
-            const allScores = [judge.creativity, judge.quality, ...judge.specialCriteria];
-            const validScores = allScores.filter(score => score > 0);
-            
-            if (validScores.length === 0) return 'fair';
-            
-            let fairCount = 0;
-            let questionableCount = 0;
-            let unfairCount = 0;
-            
-            // Check creativity
-            if (judge.creativity > 0) {
-                const fairness = calculateIndividualFairness(judgeIndex, 'creativity', judge.creativity);
-                if (fairness === 'fair') fairCount++;
-                else if (fairness === 'questionable') questionableCount++;
-                else unfairCount++;
-            }
-            
-            // Check quality
-            if (judge.quality > 0) {
-                const fairness = calculateIndividualFairness(judgeIndex, 'quality', judge.quality);
-                if (fairness === 'fair') fairCount++;
-                else if (fairness === 'questionable') questionableCount++;
-                else unfairCount++;
-            }
-            
-            // Check special criteria
-            judge.specialCriteria.forEach((criteria, cIndex) => {
-                if (criteria > 0) {
-                    const fairness = calculateIndividualFairness(judgeIndex, `criteria_${cIndex}`, criteria);
-                    if (fairness === 'fair') fairCount++;
-                    else if (fairness === 'questionable') questionableCount++;
-                    else unfairCount++;
-                }
-            });
-            
-            const totalChecked = fairCount + questionableCount + unfairCount;
-            if (totalChecked === 0) return 'fair';
-            
-            // Determine overall fairness based on majority
-            if (unfairCount > totalChecked / 2) return 'unfair';
-            if (questionableCount + unfairCount > fairCount) return 'questionable';
-            return 'fair';
-        }
-
-        // Calculate fairness indicator for an individual score
-        function calculateIndividualFairness(judgeIndex, scoreType, currentScore) {
+        // Calculate fairness indicator for a score
+        function calculateFairness(judgeIndex, scoreType, currentScore) {
             if (state.numJudges < 3) return 'fair'; // Need at least 3 judges for meaningful analysis
             
             // Get all scores from other judges for this score type
@@ -1128,27 +1017,15 @@
                 const judgeCard = document.createElement('div');
                 judgeCard.className = 'card p-4';
                 
-                // Calculate overall fairness for this judge
-                const overallFairness = calculateJudgeFairness(index);
+                // Calculate fairness indicators
+                const creativityFairness = calculateFairness(index, 'creativity', judge.creativity);
+                const qualityFairness = calculateFairness(index, 'quality', judge.quality);
                 
                 judgeCard.innerHTML = `
                     <div class="flex flex-col gap-4 mb-4">
-                        <div class="flex items-center justify-between gap-2">
-                            <input type="text" class="input judge-name-input flex-1" 
-                                   value="${judge.name}" 
-                                   onchange="updateJudgeName(${index}, this.value)"
-                                   placeholder="${t('editJudgeName')}">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-medium">${t('judge')} ${judge.id}</h3>
                         </div>
-                        
-                        <div class="judge-fairness-indicator">
-                            <span class="fairness-dot fairness-${overallFairness}"></span>
-                            <span class="text-sm font-medium">
-                                ${overallFairness === 'fair' ? (state.language === 'ar' ? 'عادل' : 'Fair') :
-                                  overallFairness === 'questionable' ? (state.language === 'ar' ? 'مشكوك فيه' : 'Questionable') :
-                                  (state.language === 'ar' ? 'غير عادل' : 'Unfair')}
-                            </span>
-                        </div>
-                        
                         <div class="judge-impact-controls flex items-center gap-2">
                             <span class="text-sm">${t('impactToggle')}:</span>
                             <div class="flex gap-2 w-full">
@@ -1166,14 +1043,20 @@
                     
                     <div class="space-y-4">
                         <div>
-                            <label class="label mb-2 block">${t('creativity')}</label>
+                            <label class="label mb-2 block">
+                                ${t('creativity')}
+                                <span class="fairness-dot fairness-${creativityFairness}"></span>
+                            </label>
                             <input type="number" class="input" min="0" max="10" step="0.1" 
                                    value="${judge.creativity}" 
                                    onchange="updateJudgeField(${index}, 'creativity', this.value); renderJudges();">
                         </div>
                         
                         <div>
-                            <label class="label mb-2 block">${t('quality')}</label>
+                            <label class="label mb-2 block">
+                                ${t('quality')}
+                                <span class="fairness-dot fairness-${qualityFairness}"></span>
+                            </label>
                             <input type="number" class="input" min="0" max="10" step="0.1" 
                                    value="${judge.quality}" 
                                    onchange="updateJudgeField(${index}, 'quality', this.value); renderJudges();">
@@ -1182,9 +1065,15 @@
                         <div>
                             <label class="label mb-2 block">${t('specialCriteria')}</label>
                             <div id="specialCriteria_${index}" class="space-y-2">
-                                ${judge.specialCriteria.map((criteria, cIndex) => `
+                                ${judge.specialCriteria.map((criteria, cIndex) => {
+                                    const criteriaFairness = calculateFairness(index, `criteria_${cIndex}`, criteria);
+                                    return `
                                     <div class="flex gap-2 mobile-input-group">
                                         <div class="flex-1">
+                                            <div class="flex items-center gap-2 mb-1">
+                                                <span class="text-sm">${t('criteria')} ${cIndex + 1}</span>
+                                                <span class="fairness-dot fairness-${criteriaFairness}"></span>
+                                            </div>
                                             <input type="number" class="input" min="0" max="10" step="0.1" 
                                                    value="${criteria}" 
                                                    onchange="updateSpecialCriteria(${index}, ${cIndex}, this.value); renderJudges();"
@@ -1192,7 +1081,7 @@
                                         </div>
                                         <button class="btn btn-destructive" onclick="removeSpecialCriteria(${index}, ${cIndex})">×</button>
                                     </div>
-                                `).join('')}
+                                `;}).join('')}
                             </div>
                             <button class="btn btn-outline mt-2 w-full" onclick="addSpecialCriteria(${index})">
                                 + ${t('criteria')}
@@ -1202,11 +1091,6 @@
                 `;
                 container.appendChild(judgeCard);
             });
-        }
-
-        // Update judge name
-        function updateJudgeName(index, newName) {
-            state.judges[index].name = newName || (t('judge') + ' ' + (index + 1));
         }
 
         // Update judge field
@@ -1352,40 +1236,6 @@
             document.getElementById('fairnessAnalysisDesc').textContent = t('fairnessAnalysisDesc');
             document.getElementById('statisticalMethodTitle').textContent = t('statisticalMethodTitle');
             document.getElementById('statisticalMethodDesc').textContent = t('statisticalMethodDesc');
-            
-            // Update additional math page elements
-            const excludeEl = document.getElementById('excludeCurrentJudge');
-            if (excludeEl) excludeEl.textContent = t('excludeCurrentJudge');
-            const calculateEl = document.getElementById('calculateMeanStd');
-            if (calculateEl) calculateEl.textContent = t('calculateMeanStd');
-            const compareEl = document.getElementById('compareScore');
-            if (compareEl) compareEl.textContent = t('compareScore');
-            const mathFormulasEl = document.getElementById('mathFormulasTitle');
-            if (mathFormulasEl) mathFormulasEl.textContent = t('mathFormulasTitle');
-            const fairnessClassEl = document.getElementById('fairnessClassificationTitle');
-            if (fairnessClassEl) fairnessClassEl.textContent = t('fairnessClassificationTitle');
-            const interpretEl = document.getElementById('fairInterpretationTitle');
-            if (interpretEl) interpretEl.textContent = t('fairInterpretationTitle');
-            const techImplEl = document.getElementById('technicalImplementationTitle');
-            if (techImplEl) techImplEl.textContent = t('technicalImplementationTitle');
-            const techDescEl = document.getElementById('technicalImplementationDesc');
-            if (techDescEl) techDescEl.textContent = t('technicalImplementationDesc');
-            const realTimeEl = document.getElementById('realTimeAnalysisTitle');
-            if (realTimeEl) realTimeEl.textContent = t('realTimeAnalysisTitle');
-            const greenDotEl = document.getElementById('greenDotMeaning');
-            if (greenDotEl) greenDotEl.innerHTML = `<strong>${state.language === 'ar' ? 'النقاط الخضراء' : 'Green dots'}</strong> ${t('greenDotMeaning').replace('<strong>Green dots</strong> ', '')}`;
-            const yellowDotEl = document.getElementById('yellowDotMeaning');
-            if (yellowDotEl) yellowDotEl.innerHTML = `<strong>${state.language === 'ar' ? 'النقاط الصفراء' : 'Yellow dots'}</strong> ${t('yellowDotMeaning').replace('<strong>Yellow dots</strong> ', '')}`;
-            const redDotEl = document.getElementById('redDotMeaning');
-            if (redDotEl) redDotEl.innerHTML = `<strong>${state.language === 'ar' ? 'النقاط الحمراء' : 'Red dots'}</strong> ${t('redDotMeaning').replace('<strong>Red dots</strong> ', '')}`;
-            const fairnessRecalcEl = document.getElementById('fairnessRecalc');
-            if (fairnessRecalcEl) fairnessRecalcEl.textContent = t('fairnessRecalc');
-            const requiresEl = document.getElementById('requiresThreeJudges');
-            if (requiresEl) requiresEl.textContent = t('requiresThreeJudges');
-            const analyzeEl = document.getElementById('analyzeIndependently');
-            if (analyzeEl) analyzeEl.textContent = t('analyzeIndependently');
-            const visualEl = document.getElementById('visualFeedback');
-            if (visualEl) visualEl.textContent = t('visualFeedback');
 
             // Re-render judges to update their translations
             renderJudges();
